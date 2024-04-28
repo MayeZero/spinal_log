@@ -11,6 +11,9 @@ public class DataManager : MonoBehaviour
         randomData = new List<double>();
     }
 
+    /// <summary>
+    /// Use this as a data reader at this stage
+    /// </summary>
     public void GenerateRandomData()
     {
         if (randomData.Count > 300)
