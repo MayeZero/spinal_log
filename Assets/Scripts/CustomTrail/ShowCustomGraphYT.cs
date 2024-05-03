@@ -8,13 +8,16 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
 {
 
     [SerializeField] LineChart chart;
-
+    
     private List<double> forceTrail;
+    private List<double> realTimeForceInput;
+    
 
     // Start is called before the first frame update
     void Start()
     {
         forceTrail = new List<double>();
+        realTimeForceInput = new List<double>();
     }
 
     private void Awake()
@@ -28,7 +31,11 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetButtonDown("Fire1"))
+        {
+            GenerateRandomData();
+            addRealTimeDataToGraph();
+        }
     }
     void InitChartWithTrail()
     {
@@ -77,15 +84,91 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         }
     }
 
-    
+    //private void generateRandomData()
+    //{
+    //    if (randomData.Count > 300)
+    //    {
+    //        ClearData();
+    //    }
+        
+    //    double randomValue = Random.Range(0.0f, 25.0f);
+    //    randomData.Add(randomValue);
+
+    //    Debug.Log("Random data generated:" + randomValue);
+    //    Debug.Log("Data number: " + randomData.Count);
+        
+    //}
+
+    private void addRealTimeDataToGraph()
+    {
+        //var chart = gameObject.GetComponent<LineChart>();
+        var serie1 = chart.GetSerie("InputForce");
+
+        if (serie1.dataCount > 300)
+        {
+            serie1.ClearData();
+        }
+        else
+        {
+            chart.AddData("InputForce", realTimeForceInput.Last());
+        }
+    }
+
+    private void GenerateRandomData()
+    {
+        if (realTimeForceInput.Count > 300)
+        {
+            realTimeForceInput.Clear();
+        }
+
+        double randomValue = Random.Range(0.0f, 25.0f);
+        realTimeForceInput.Add(randomValue);
+
+        Debug.Log("Random data generated:" + randomValue);
+        Debug.Log("Data number: " + realTimeForceInput.Count);
+
+    }
+
+
+    public void addCustomTrailToGraph()
+    {
+        
+        //var chart = gameObject.GetComponent<LineChart>();
+        var serie0 = chart.GetSerie("CustomTrail");
+        var serie1 = chart.GetSerie("InputForce");
+        serie0.ClearData();
+        serie1.ClearData();
+        
+        for (int i = 0; i < forceTrail.Count; i++)
+        {
+            chart.AddData("CustomTrail", forceTrail[i]);
+
+        }
+    }
+
+    public void cleanRealTimeData()
+    {
+        realTimeForceInput.Clear();
+    }
+
+    public void cleanGraph()
+    {
+        //var chart = gameObject.GetComponent<LineChart>();
+        var serie0 = chart.GetSerie("CustomTrail");
+        var serie1 = chart.GetSerie("InputForce");
+        serie0.ClearData();
+        serie1.ClearData();
+    }
 
     public void loadData(TrailData data)
     {
         this.forceTrail = data.forceTrail;
+        Debug.Log("DataLoaded");
     }
 
     public void SaveData(ref TrailData data)
     {
-        data.forceTrail = this.forceTrail;
+        // save real time force trail to data.forceTrail
+        data.forceTrail = this.realTimeForceInput;
     }
 }

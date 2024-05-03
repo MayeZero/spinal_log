@@ -5,9 +5,14 @@ using System.Linq;
 
 public class DataPersistenceManager : MonoBehaviour
 {
+    [SerializeField] private string fileName;
+
+
     private TrailData trailData;
 
     private List<IDataPersistence> dataPersistenceObjects;
+
+    private FileDataHandler dataHandler;
     public static DataPersistenceManager instance { get; private set; }
 
     private void Awake()
@@ -21,6 +26,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void Start()
     {
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         this.dataPersistenceObjects = FindAllDataPersistenceObjects();
         LoadGraph();
     }
@@ -33,6 +39,8 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void LoadGraph()
     {
+        this.trailData = dataHandler.Load();
+
         if(this.trailData == null)
         {
             Debug.Log("No data was found. Initialising data to defaults");
@@ -53,12 +61,14 @@ public class DataPersistenceManager : MonoBehaviour
             dataPersistenceObject.SaveData(ref trailData);
         }
         Debug.Log("Saved trailData = " + trailData.forceTrail.Count);
+
+        dataHandler.Save(trailData);
     }
 
-    private void OnApplicationQuit()
-    {
-        SaveGraph(); 
-    }
+    //private void OnApplicationQuit()
+    //{
+    //    SaveGraph(); 
+    //}
 
     private List<IDataPersistence> FindAllDataPersistenceObjects()
     {

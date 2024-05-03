@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ButtonsHandllers : MonoBehaviour
 {
@@ -19,5 +20,10 @@ public class ButtonsHandllers : MonoBehaviour
     public void OnClearButtonClicked()
     {
         DataPersistenceManager.instance.NewGraph();
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
     }
 }
