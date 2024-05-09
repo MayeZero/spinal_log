@@ -67,7 +67,9 @@ public class csvReader : MonoBehaviour
 
         try
         {
-            using (StreamReader reader = new StreamReader("Assets/Trials/expertTrial_short.csv"))
+            string filePath = Application.streamingAssetsPath + "/expertTrial_short.csv";
+            //using (StreamReader reader = new StreamReader("Assets/Trials/expertTrial_short.csv"))
+            using (StreamReader reader = new StreamReader(filePath))
             {
                 string line;
                 reader.ReadLine(); // Skip the header line

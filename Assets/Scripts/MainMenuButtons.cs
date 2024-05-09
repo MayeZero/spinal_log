@@ -15,4 +15,9 @@ public class MainMenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("Assets/Scenes/CustomTrial.unity");
     }
+
+    public void LoadBTConnection()
+    {
+        SceneManager.LoadScene("Assets/Scenes/BTConnection.unity");
+    }
 }
