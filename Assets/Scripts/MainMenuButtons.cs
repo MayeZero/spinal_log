@@ -20,4 +20,9 @@ public class MainMenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("Assets/Scenes/BTConnection.unity");
     }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
+    }
 }

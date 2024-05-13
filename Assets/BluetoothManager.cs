@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Android;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class BluetoothManager : MonoBehaviour
 {
@@ -13,9 +14,23 @@ public class BluetoothManager : MonoBehaviour
     public GameObject deviceMACText;
     private bool isConnected;
 
+
+    private bool isStiff;
+    // stiffness status send back to SpinalLog Device, 1 = normal, 2 = hard
+    private string stiffness;
+
+    public string inputdata = "0,0,0,0,0,0,0,0";
+
     private static AndroidJavaClass unity3dbluetoothplugin;
     private static AndroidJavaObject BluetoothConnector;
-    // Start is called before the first frame update
+    public event EventHandler<BluetoothDataEventArgs> BluetoothDataReceived;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    // Start is called before the first frame update   
     void Start()
     {
         InitBluetooth();
@@ -126,6 +141,7 @@ public class BluetoothManager : MonoBehaviour
             return;
 
         BluetoothConnector.CallStatic("StartConnection", deviceAdd.text.ToString().ToUpper());
+
     }
 
     // Stop BT connetion
@@ -151,7 +167,10 @@ public class BluetoothManager : MonoBehaviour
     public void ReadData(string data)
     {
         Debug.Log("BT Stream: " + data);
+        //receivedData.text = data;
+        inputdata = data;
         receivedData.text = data;
+        BluetoothDataReceived?.Invoke(this, new BluetoothDataEventArgs(data));
     }
 
     // Write data to the connected BT device
@@ -161,6 +180,7 @@ public class BluetoothManager : MonoBehaviour
             return;
 
         if (isConnected)
+            //should be sending stiffness 
             BluetoothConnector.CallStatic("WriteData", dataToSend.text.ToString());
     }
 
@@ -180,4 +200,9 @@ public class BluetoothManager : MonoBehaviour
 
         BluetoothConnector.CallStatic("Toast", data);
     }
+
+    // Code from Claude, learning how to use EventHandler
+    
+
+
 }
