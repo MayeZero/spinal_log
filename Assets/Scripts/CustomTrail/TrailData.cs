@@ -5,11 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class TrailData 
 {
-    public List<double> forceTrail;
+    public List<float> forceTrail;
 
     public TrailData()
     {
-        this.forceTrail = new List<double>();
+        this.forceTrail = new List<float>();
     }
 
     public void GenerateRandomData()
@@ -19,7 +19,7 @@ public class TrailData
             ClearData();
         }
         
-        double randomValue = Random.Range(0.0f, 25.0f);
+        float randomValue = Random.Range(0.0f, 25.0f);
         forceTrail.Add(randomValue);
 
         Debug.Log("Random data generated:" + randomValue);

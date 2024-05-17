@@ -25,11 +25,11 @@ public class ShowingGraph : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            dataManager.GenerateRandomData();
-            AddRealTimeData();
-        }
+        //if (Input.GetButtonDown("Fire1"))
+        //{
+        //    dataManager.GenerateRandomData();
+        //    AddRealTimeData();
+        //}
     }
 
     void AddTrailData()
@@ -81,33 +81,8 @@ public class ShowingGraph : MonoBehaviour
     {
         var chart = gameObject.GetComponent<LineChart>(); 
         var serie1 = chart.GetSerie("RealTimeData");
-        //if (chart == null)
-        //{
-        //    chart = gameObject.AddComponent<LineChart>();
-        //    chart.Init();
-        //}
-        //chart.EnsureChartComponent<Title>().show = false;
-        //chart.EnsureChartComponent<Title>().text = "Line Simple";
+        
 
-        //chart.EnsureChartComponent<Tooltip>().show = true;
-        //chart.EnsureChartComponent<Legend>().show = false;
-
-        //var xAxis = chart.EnsureChartComponent<XAxis>();
-        //var yAxis = chart.EnsureChartComponent<YAxis>();
-        //xAxis.show = true;
-        //yAxis.show = true;
-        //xAxis.type = Axis.AxisType.Category;
-        //yAxis.type = Axis.AxisType.Value;
-
-        //xAxis.splitNumber = 300;
-        //xAxis.boundaryGap = true;
-
-        //chart.RemoveData();
-        //double randomValue = UnityEngine.Random.Range(0.0f, 25.0f);
-        //chart.AddXAxisData("1");
-
-        ///Add lastest data to the chart///
-        //chart.AddData("RealTimeData", dataManager.randomData.Last());
 
         if (serie1.dataCount > 300)
         {
@@ -117,19 +92,7 @@ public class ShowingGraph : MonoBehaviour
             chart.AddData("RealTimeData", dataManager.randomData.Last());
         }
 
-        //for (int i = 0; i < dataManager.randomData.Count; i++)
-        //{
-        //    Debug.Log("from addRealTimeData: " + dataManager.randomData.Count);
-        //    chart.UpdateData("RealTimeData", i, dataManager.randomData[i]);
-        //}
-
-        //chart.AddSerie<Line>();
-        //for (int i = 0; i < 300; i++)
-        //{
-        //    //chart.AddXAxisData("x" + i);
-        //    chart.AddData(1,10);
-        //    //chart.AddData(1, dataManager.randomData[i]);
-        //}
+        
     }
 
 }

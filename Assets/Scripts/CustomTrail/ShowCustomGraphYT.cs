@@ -9,34 +9,22 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
 
     [SerializeField] LineChart chart;
     
-    private List<double> forceTrail;
-    private List<double> realTimeForceInput;
+    private List<float> forceTrail;
+    private List<float> realTimeForceInput;
     
 
     // Start is called before the first frame update
     void Start()
     {
-        forceTrail = new List<double>();
-        realTimeForceInput = new List<double>();
+        forceTrail = new List<float>();
+        realTimeForceInput = new List<float>();
     }
 
     private void Awake()
     {
-        //dataManager = GetComponent<DataManager>();
-        //csvData = csvReader.srdCSVFile();
         InitChartWithTrail();
-        //AddRealTimeData();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            GenerateRandomData();
-            addRealTimeDataToGraph();
-        }
-    }
     void InitChartWithTrail()
     {
         //var chart = gameObject.GetComponent<LineChart>();
@@ -84,25 +72,18 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         }
     }
 
-    //private void generateRandomData()
-    //{
-    //    if (randomData.Count > 300)
-    //    {
-    //        ClearData();
-    //    }
-        
-    //    double randomValue = Random.Range(0.0f, 25.0f);
-    //    randomData.Add(randomValue);
-
-    //    Debug.Log("Random data generated:" + randomValue);
-    //    Debug.Log("Data number: " + randomData.Count);
-        
-    //}
-
-    private void addRealTimeDataToGraph()
+    public void addRealTimeDataToGraph(float inputForce)
     {
         //var chart = gameObject.GetComponent<LineChart>();
         var serie1 = chart.GetSerie("InputForce");
+        if (this.realTimeForceInput.Count > 300)
+        {
+            realTimeForceInput.Clear();
+        }
+        else
+        {
+            realTimeForceInput.Add(inputForce);
+        }
 
         if (serie1.dataCount > 300)
         {
@@ -110,7 +91,8 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         }
         else
         {
-            chart.AddData("InputForce", realTimeForceInput.Last());
+            //chart.AddData("InputForce", realTimeForceInput.Last());
+            chart.AddData("InputForce", inputForce);
         }
     }
 
@@ -121,7 +103,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
             realTimeForceInput.Clear();
         }
 
-        double randomValue = Random.Range(0.0f, 25.0f);
+        float randomValue = Random.Range(0.0f, 25.0f);
         realTimeForceInput.Add(randomValue);
 
         Debug.Log("Random data generated:" + randomValue);

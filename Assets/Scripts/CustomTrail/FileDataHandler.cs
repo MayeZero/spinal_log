@@ -31,7 +31,7 @@ public class FileDataHandler
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    if (double.TryParse(lines[i], out double value))
+                    if (float.TryParse(lines[i], out float value))
                     {
                         loadedTrailData.forceTrail.Add(value);
                     }
@@ -61,7 +61,7 @@ public class FileDataHandler
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("Force");
 
-            foreach (double value in data.forceTrail)
+            foreach (float value in data.forceTrail)
             {
                 stringBuilder.AppendLine(value.ToString());
             }

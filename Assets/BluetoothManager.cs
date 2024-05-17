@@ -14,15 +14,16 @@ public class BluetoothManager : MonoBehaviour
     public GameObject deviceMACText;
     private bool isConnected;
 
-
+    // stiffness status send back to SpinalLog Device, 0 = default, 1 = hard
     private bool isStiff;
-    // stiffness status send back to SpinalLog Device, 1 = normal, 2 = hard
-    private string stiffness;
 
     public string inputdata = "0,0,0,0,0,0,0,0";
 
     private static AndroidJavaClass unity3dbluetoothplugin;
     private static AndroidJavaObject BluetoothConnector;
+
+    public bool IsStiff { get => isStiff; set => isStiff = value; }
+
     public event EventHandler<BluetoothDataEventArgs> BluetoothDataReceived;
 
     private void Awake()
@@ -30,11 +31,17 @@ public class BluetoothManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
+    private void Update()
+    {
+        sendStiffnessStatus();
+    }
+
     // Start is called before the first frame update   
     void Start()
     {
         InitBluetooth();
         isConnected = false;
+        IsStiff = false;
     }
 
     // creating an instance of the bluetooth class from the plugin 
@@ -201,8 +208,30 @@ public class BluetoothManager : MonoBehaviour
         BluetoothConnector.CallStatic("Toast", data);
     }
 
-    // Code from Claude, learning how to use EventHandler
+    public void sendStiffnessStatus()
+    {
+        if (Application.platform != RuntimePlatform.Android)
+            return;
+
+        if (isConnected)
+        {
+            if (IsStiff)
+            {
+                BluetoothConnector.CallStatic("WriteData", "1"); 
+            }
+            else
+            {
+                BluetoothConnector.CallStatic("WriteData", "0");
+            }
+        }
+            
+    }
+
+
+
+
     
+
 
 
 }

@@ -25,4 +25,9 @@ public class MainMenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
     }
+
+    public void Load3DModel()
+    {
+        SceneManager.LoadScene("Assets/Scenes/3DModel.unity");
+    }
 }
