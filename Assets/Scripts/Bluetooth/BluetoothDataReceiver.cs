@@ -252,20 +252,6 @@ public class BluetoothDataReceiver : MonoBehaviour
         }
     }
 
-    public void setStiffness()
-    {
-        if (bluetoothManager.IsStiff)
-        {
-            bluetoothManager.IsStiff = false;
-            Debug.Log(bluetoothManager.IsStiff);
-        }
-        else
-        {
-            bluetoothManager.IsStiff = true;
-            Debug.Log(bluetoothManager.IsStiff);
-        }
-    }
-
     private float computeSensorForce(int sensorIndex)
     {
         float sensorForce = (1 - this.converted_data[sensorIndex] / 30) * 219;

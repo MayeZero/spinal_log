@@ -1869,7 +1869,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 200, y: 107.6}
+  m_CellSize: {x: 250, y: 108.51}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -3032,7 +3032,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 502053108}
         m_TargetAssemblyTypeName: BluetoothManager, Assembly-CSharp
-        m_MethodName: StopConnection
+        m_MethodName: ConnectToPairedDevice
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

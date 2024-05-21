@@ -4,6 +4,7 @@ using UnityEngine.Android;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using JetBrains.Annotations;
 
 public class BluetoothManager : MonoBehaviour
 {
@@ -217,17 +218,63 @@ public class BluetoothManager : MonoBehaviour
         {
             if (IsStiff)
             {
-                BluetoothConnector.CallStatic("WriteData", "1"); 
+                BluetoothConnector.CallStatic("WriteData", "stiff"); 
             }
             else
             {
-                BluetoothConnector.CallStatic("WriteData", "0");
+                BluetoothConnector.CallStatic("WriteData", "default");
             }
         }
             
     }
 
+    public void ConnectToPairedDevice()
+{
+    if (Application.platform != RuntimePlatform.Android) return;
 
+    // Get the list of paired devices
+    string[] data = BluetoothConnector.CallStatic<string[]>("GetPairedDevices");
+
+    // Destroy devicesListContainer child objects for new Paired Devices display
+    // foreach (Transform child in devicesListContainer.transform)
+    // {
+    //     Destroy(child.gameObject);
+    // }
+
+    // Display the paired devices
+    foreach (var d in data)
+    {
+        // GameObject newDevice = deviceMACText;
+        // newDevice.GetComponent<Text>().text = d;
+        // Instantiate(newDevice, devicesListContainer.transform);
+
+        
+
+        // Connect to the device if it matches the deviceAdd.text
+        if (d.Contains("SpinalLog"))
+        {
+            string[] parts = d.Split('+');
+            string macAddress = parts[0];
+            BluetoothConnector.CallStatic("StartConnection", macAddress);
+            break; // Break out of the loop since we found the device to connect to
+        }
+    }
+
+    
+}
+
+    public void swtichStiffness(){
+        if (IsStiff){
+            isStiff = false;
+            Debug.Log(IsStiff);
+
+        }
+
+        else {
+            isStiff = true;
+            Debug.Log(IsStiff);
+        }
+    }
 
 
     
