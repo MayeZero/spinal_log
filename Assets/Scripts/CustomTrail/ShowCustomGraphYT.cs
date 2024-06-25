@@ -48,12 +48,12 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         //xAxis.type = Axis.AxisType.Time;
         xAxis.minMaxType = Axis.AxisMinMaxType.Custom;
         xAxis.min = 0;
-        xAxis.max = 300;
-        xAxis.interval = 30;
+        xAxis.max = 1500;
+        xAxis.interval = 50;
         //xAxis.type = Axis.AxisType.Category;
         yAxis.type = Axis.AxisType.Value;
 
-        xAxis.splitNumber = 300;
+        xAxis.splitNumber = 1500;
         xAxis.boundaryGap = false;
 
         chart.RemoveData();
@@ -76,7 +76,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
     {
         //var chart = gameObject.GetComponent<LineChart>();
         var serie1 = chart.GetSerie("InputForce");
-        if (this.realTimeForceInput.Count > 300)
+        if (this.realTimeForceInput.Count > 1500)
         {
             realTimeForceInput.Clear();
         }
@@ -85,7 +85,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
             realTimeForceInput.Add(inputForce);
         }
 
-        if (serie1.dataCount > 300)
+        if (serie1.dataCount > 1500)
         {
             serie1.ClearData();
         }
@@ -93,24 +93,9 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         {
             //chart.AddData("InputForce", realTimeForceInput.Last());
             chart.AddData("InputForce", inputForce);
+            Debug.Log("added data: " + inputForce);
         }
     }
-
-    private void GenerateRandomData()
-    {
-        if (realTimeForceInput.Count > 300)
-        {
-            realTimeForceInput.Clear();
-        }
-
-        float randomValue = Random.Range(0.0f, 25.0f);
-        realTimeForceInput.Add(randomValue);
-
-        Debug.Log("Random data generated:" + randomValue);
-        Debug.Log("Data number: " + realTimeForceInput.Count);
-
-    }
-
 
     public void addCustomTrailToGraph()
     {

@@ -1,14 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.Examples;
 using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
-public class BluetoothDataReceiver : MonoBehaviour
+public class BluetoothDataRecieverPreset : MonoBehaviour
 {
-    [SerializeField] ShowCustomGraphYT graphYT;
-    [SerializeField] UISwitcher.UISwitcher toggle;
+    [SerializeField] ShowingGraphPreset graph;
+
     private BluetoothManager bluetoothManager;
     
     [SerializeField] Text output;
@@ -28,12 +29,12 @@ public class BluetoothDataReceiver : MonoBehaviour
     public string input;
     public float focusSectionForce;
 
-    private IEnumerator myCoroutine;
+    private IEnumerator myCoroutine2;
 
     void Start()
     {
         bluetoothManager = FindObjectOfType<BluetoothManager>();
-        toggle.isOn = bluetoothManager.IsStiff;
+
         numSections = 4;
         numSensors = 8;
         focusSectionForce = 0.0f;
@@ -53,13 +54,23 @@ public class BluetoothDataReceiver : MonoBehaviour
 
         focusSectionIndex = 0;
 
-        if (myCoroutine != null)
+        if (myCoroutine2 != null)
         {
-            StopCoroutine(myCoroutine);
+            StopCoroutine(myCoroutine2);
         }
-        myCoroutine = DataProcessing(0.01f);
-        StartCoroutine(myCoroutine);
+        myCoroutine2 = DataProcessing(0.02f);
+        Debug.Log("my coroutine set");
+        StartCoroutine(myCoroutine2);
+        Debug.Log("Coroutine2 started");
 
+        //if (bluetoothManager != null)
+        //{
+        //    bluetoothManager.BluetoothDataReceived += HandleBluetoothData;
+        //}
+        //else
+        //{
+        //    log.text = "Bluttooth Manager not found!";
+        //}
     }
 
     private IEnumerator DataProcessing(float waitTime)
@@ -75,13 +86,14 @@ public class BluetoothDataReceiver : MonoBehaviour
         computeDisplacementWithDistance();
         findSectionEngaged();
         computeSectionForce(focusSectionIndex);
-        graphYT.addRealTimeDataToGraph(focusSectionForce) ;
+        Debug.Log("Section force computed");
+        graph.addRealTimeDataToGraph(focusSectionForce) ;
+        Debug.Log("Added to the graph");
 
-        string data = focusSectionForce.ToString();//testing 
-        //string sensorsDisplacementsString = string.Join(", ", sensors_displacements);
+        //string data = focusSectionForce.ToString();//testing 
         
         output.text = "Focused Section: " + focusSectionIndex;
-        log.text = "Force: " + focusSectionForce;
+        log.text = "Force: " + sensorDatainString;
 
         sensors_loads1 = converted_data;
 
@@ -92,7 +104,21 @@ public class BluetoothDataReceiver : MonoBehaviour
 
     private void Update()
     {
+        // sensorDatainString = bluetoothManager.inputdata;
         
+        // converted_data = ConvertedFloat(sensorDatainString);
+
+        // computeDisplacementWithDistance();
+        // findSectionEngaged();
+        // computeSectionForce(focusSectionIndex);
+        // graphYT.addRealTimeDataToGraph(focusSectionForce) ;
+
+        // string data = focusSectionForce.ToString();//testing 
+        
+        // output.text = "Focused Section: " + focusSectionIndex;
+        // log.text = "Force: " + sensorDatainString;
+
+        // sensors_loads1 = converted_data;
         
     }
 
@@ -248,10 +274,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         }else{
              this.focusSectionForce = force;
         }
-
         
-        
-        //this.focusSectionForce = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
             
     }
 }

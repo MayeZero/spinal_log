@@ -14,29 +14,6 @@ public class DataManager : MonoBehaviour
     /// <summary>
     /// Use this as a data reader at this stage
     /// </summary>
-    public void GenerateRandomData()
-    {
-        if (randomData.Count > 300)
-        {
-            ClearData();
-        }
-        //randomData = new List<double>();
-        
-        //for (int i = 0; i < 2; i++)
-        //{
-        //    double randomValue = Random.Range(0.0f, 25.0f);
-        //    randomData.Add(randomValue);
-        //}
-        double randomValue = Random.Range(0.0f, 25.0f);
-        randomData.Add(randomValue);
-
-        Debug.Log("Random data generated:" + randomValue);
-        Debug.Log("Data number: " + randomData.Count);
-        //foreach (double value in randomData)
-        //{
-        //    Debug.Log(value);
-        //}
-    }
 
     public void ClearData()
     {

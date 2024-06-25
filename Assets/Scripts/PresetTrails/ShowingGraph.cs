@@ -17,7 +17,7 @@ public class ShowingGraph : MonoBehaviour
     void Awake()
     {
         //dataManager = GetComponent<DataManager>();
-        csvData = csvReader.srdCSVFile();
+        //csvData = csvReader.srdCSVFile();
         AddTrailData();
         //AddRealTimeData();
 

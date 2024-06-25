@@ -14,8 +14,8 @@ public class csvReader : MonoBehaviour
     {
 
 
-        List<double> data = srdCSVFile();
-        foreach (double value in data)
+        List<float> data = srdCSVFile();
+        foreach (float value in data)
         {
             Debug.Log(value);
         }
@@ -24,36 +24,33 @@ public class csvReader : MonoBehaviour
 
     
 
-    public static List<double> srdCSVFile()
+    public static List<float> srdCSVFile()
     {
-        List<double> records = new List<double>();
+        List<float> records = new List<float>();
+
+        
 
         string sFilePath = Path.Combine(Application.streamingAssetsPath, "expertTrial_short.csv");
         
         if (Application.platform == RuntimePlatform.Android)
         {
-            UnityWebRequest www = UnityWebRequest.Get(sFilePath);
-            www.SendWebRequest();
-            while (!www.isDone) ;
             try
             {
-                string filePath = Application.streamingAssetsPath + "/expertTrial_short.csv";
-                //Debug.Log(Application.persistentDataPath);
-                //using (StreamReader reader = new StreamReader("Assets/Trials/expertTrial_short.csv"))
-                using (StreamReader reader = new StreamReader(filePath))
-                {
-                    string line;
-                    reader.ReadLine(); // Skip the header line
+                TextAsset csvFile = Resources.Load<TextAsset>("expertTrial_short");
+string[] csvLines = csvFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (!string.IsNullOrEmpty(line))
-                        {
-                            double value = double.Parse(line);
-                            records.Add(value);
-                        }
-                    }
-                }
+records = new List<float>();
+
+// Skip the header line
+for (int i = 1; i < csvLines.Length; i++)
+{
+    string line = csvLines[i].Trim();
+    if (!string.IsNullOrEmpty(line))
+    {
+        float value = float.Parse(line);
+        records.Add(value);
+    }
+}
             }
             catch (IOException ex)
             {
@@ -69,7 +66,11 @@ public class csvReader : MonoBehaviour
 
         try
         {
-            string filePath = Application.streamingAssetsPath + "/expertTrial_short.csv";
+            
+            ///OLD Version reading csv///
+
+            string filePath = Application.streamingAssetsPath + "/expertTrial.csv";
+            Debug.Log("loaded file: " + filePath);
             //Debug.Log(Application.persistentDataPath);
             //using (StreamReader reader = new StreamReader("Assets/Trials/expertTrial_short.csv"))
             using (StreamReader reader = new StreamReader(filePath))
@@ -81,11 +82,13 @@ public class csvReader : MonoBehaviour
                 {
                     if (!string.IsNullOrEmpty(line))
                     {
-                        double value = double.Parse(line);
+                        float value = float.Parse(line);
                         records.Add(value);
                     }
                 }
             }
+
+            /////////////////////////
         }
         catch (IOException ex)
         {
