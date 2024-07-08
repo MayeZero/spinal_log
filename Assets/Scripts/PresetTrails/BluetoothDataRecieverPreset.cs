@@ -11,6 +11,11 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     [SerializeField] ShowingGraphPreset graph;
 
     private BluetoothManager bluetoothManager;
+    private LowPass lowPassFilter;
+    float cutoffFrequency = 10f; // Adjust this value based on your requirements
+    float samplingFrequency = 100f; // Adjust this value based on your sampling rate
+    bool adaptive = true;
+    int filterOrder = 2; // Choose between 1 or 2
     
     [SerializeField] Text output;
     [SerializeField] Text log;
@@ -27,18 +32,22 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     public float[] sectional_loads = new float[4];
     private int focusSectionIndex;
     public string input;
-    public float focusSectionForce;
+   //public float focusSectionForce;
+    //private float filteredForce;
 
     private IEnumerator myCoroutine2;
 
     void Start()
     {
+        
+        lowPassFilter = new LowPass(cutoffFrequency, samplingFrequency, adaptive, filterOrder);
+
         bluetoothManager = FindObjectOfType<BluetoothManager>();
 
         numSections = 4;
         numSensors = 8;
-        focusSectionForce = 0.0f;
-        output.text = bluetoothManager.inputdata;
+        //focusSectionForce = 0.0f;
+        //output.text = bluetoothManager.inputdata;
 
         for (int i = 0; i < sensors_loads1.Length; i++)
         {
@@ -85,40 +94,31 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
 
         computeDisplacementWithDistance();
         findSectionEngaged();
-        computeSectionForce(focusSectionIndex);
-        Debug.Log("Section force computed");
-        graph.addRealTimeDataToGraph(focusSectionForce) ;
-        Debug.Log("Added to the graph");
+        float focusSectionForce = computeSectionForce(focusSectionIndex);
+        //Debug.Log("Section force computed");
+
+        ///Moving Average Filter
+        // float smoothingFactor = 0.3f; // Adjust this value to control the amount of smoothing
+        // float filteredForce = MovingAvgFilter(focusSectionForce, smoothingFactor);
+
+        ///LowPass Filter
+        float filteredForce = lowPassFilter.Filt(focusSectionForce, filterOrder);
+
+        graph.addRealTimeDataToGraph(filteredForce) ;
+        //focusSectionForce or filteredForce
+
+        //Debug.Log("Added to the graph");
 
         //string data = focusSectionForce.ToString();//testing 
         
         output.text = "Focused Section: " + focusSectionIndex;
-        log.text = "Force: " + sensorDatainString;
+        log.text = "Force: " + filteredForce;
+        //log.text = sensorDatainString;
 
         sensors_loads1 = converted_data;
 
         yield return new WaitForSeconds(waitTime);
         }
-        
-    }
-
-    private void Update()
-    {
-        // sensorDatainString = bluetoothManager.inputdata;
-        
-        // converted_data = ConvertedFloat(sensorDatainString);
-
-        // computeDisplacementWithDistance();
-        // findSectionEngaged();
-        // computeSectionForce(focusSectionIndex);
-        // graphYT.addRealTimeDataToGraph(focusSectionForce) ;
-
-        // string data = focusSectionForce.ToString();//testing 
-        
-        // output.text = "Focused Section: " + focusSectionIndex;
-        // log.text = "Force: " + sensorDatainString;
-
-        // sensors_loads1 = converted_data;
         
     }
 
@@ -266,15 +266,16 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         
     }
 
-    private void computeSectionForce(int focusSectionIndex)
+    private float computeSectionForce(int focusSectionIndex)
     {
         float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-        if (force < 15.0f){
-            force = 0.1f;
-        }else{
-             this.focusSectionForce = force;
-        }
+        return force;
         
             
     }
+
+    // private float MovingAvgFilter(float currentForce, float smoothingFactor){
+    //     filteredForce = (smoothingFactor * currentForce) + ((1 - smoothingFactor) * filteredForce);
+    //     return filteredForce;
+    // }
 }

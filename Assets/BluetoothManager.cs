@@ -22,7 +22,7 @@ public class BluetoothManager : MonoBehaviour
     // stiffness status send back to SpinalLog Device, 0 = default, 1 = hard
     private bool isStiff;
 
-    private IEnumerator stiffnessCoroutine;
+    //private IEnumerator stiffnessCoroutine;
 
     public string inputdata;
 
@@ -40,13 +40,13 @@ public class BluetoothManager : MonoBehaviour
 
     private void Update()
     {
-       GenerateRandomData();
+        //GenerateRandomData();
     }
 
     // Start is called before the first frame update   
     void Start()
     {
-        random = new System.Random();
+        //random = new System.Random();
         InitBluetooth();
         isConnected = false;
         IsStiff = false;
@@ -223,23 +223,23 @@ public class BluetoothManager : MonoBehaviour
         BluetoothConnector.CallStatic("Toast", data);
     }
 
-    public void sendStiffnessStatus()
-    {
-        if (Application.platform != RuntimePlatform.Android)
-            return;
+    // public void sendStiffnessStatus()
+    // {
+    //     if (Application.platform != RuntimePlatform.Android)
+    //         return;
 
-        if (isConnected)
-        {
-            if (IsStiff == true)
-            {
-                BluetoothConnector.CallStatic("WriteData", "stiff"); 
-            }
-            else
-            {
-                BluetoothConnector.CallStatic("WriteData", "default");
-            }
-        }
-    }
+    //     if (isConnected)
+    //     {
+    //         if (IsStiff == true)
+    //         {
+    //             BluetoothConnector.CallStatic("WriteData", "stiff"); 
+    //         }
+    //         else
+    //         {
+    //             BluetoothConnector.CallStatic("WriteData", "default");
+    //         }
+    //     }
+    // }
 
     public void ConnectToPairedDevice()
     {
@@ -274,15 +274,15 @@ public class BluetoothManager : MonoBehaviour
         }
     }
 
-    private IEnumerator sCoroutine(float waitTime)
-    {
-        while (true)
-        {
-            sendStiffnessStatus();
-            yield return new WaitForSeconds(waitTime);
-        }
+    // private IEnumerator sCoroutine(float waitTime)
+    // {
+    //     while (true)
+    //     {
+    //         sendStiffnessStatus();
+    //         yield return new WaitForSeconds(waitTime);
+    //     }
         
-    }
+    // }
     
     ///Testing, Generating random inputdata.///
     public void GenerateRandomData(){

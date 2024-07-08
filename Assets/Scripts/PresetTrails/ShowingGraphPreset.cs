@@ -63,7 +63,7 @@ public class ShowingGraphPreset : MonoBehaviour
         yAxis.type = Axis.AxisType.Value;
         yAxis.minMaxType = Axis.AxisMinMaxType.Custom;
         yAxis.min = 0;
-        yAxis.max = 100;
+        yAxis.max = 30;
         yAxis.interval = yAxis.max / 5;
         // yAxis.splitNumber = forceTrail.Count;
         // yAxis.boundaryGap = false;
