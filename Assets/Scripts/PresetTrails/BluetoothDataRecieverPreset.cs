@@ -11,11 +11,6 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     [SerializeField] ShowingGraphPreset graph;
 
     private BluetoothManager bluetoothManager;
-    private LowPass lowPassFilter;
-    float cutoffFrequency = 10f; // Adjust this value based on your requirements
-    float samplingFrequency = 100f; // Adjust this value based on your sampling rate
-    bool adaptive = true;
-    int filterOrder = 2; // Choose between 1 or 2
     
     [SerializeField] Text output;
     [SerializeField] Text log;
@@ -32,22 +27,16 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     public float[] sectional_loads = new float[4];
     private int focusSectionIndex;
     public string input;
-   //public float focusSectionForce;
-    //private float filteredForce;
 
     private IEnumerator myCoroutine2;
 
     void Start()
     {
-        
-        lowPassFilter = new LowPass(cutoffFrequency, samplingFrequency, adaptive, filterOrder);
-
+        // Initialize variables and start data processing coroutine
         bluetoothManager = FindObjectOfType<BluetoothManager>();
 
         numSections = 4;
         numSensors = 8;
-        //focusSectionForce = 0.0f;
-        //output.text = bluetoothManager.inputdata;
 
         for (int i = 0; i < sensors_loads1.Length; i++)
         {
@@ -72,22 +61,12 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         StartCoroutine(myCoroutine2);
         Debug.Log("Coroutine2 started");
 
-        //if (bluetoothManager != null)
-        //{
-        //    bluetoothManager.BluetoothDataReceived += HandleBluetoothData;
-        //}
-        //else
-        //{
-        //    log.text = "Bluttooth Manager not found!";
-        //}
     }
-
+    // Coroutine for continuous data processing 
     private IEnumerator DataProcessing(float waitTime)
     {
         while (true)
         {
-        //output.text = bluetoothManager.inputdata;
-
         sensorDatainString = bluetoothManager.inputdata;
         
         converted_data = ConvertedFloat(sensorDatainString);
@@ -95,25 +74,11 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         computeDisplacementWithDistance();
         findSectionEngaged();
         float focusSectionForce = computeSectionForce(focusSectionIndex);
-        //Debug.Log("Section force computed");
 
-        ///Moving Average Filter
-        // float smoothingFactor = 0.3f; // Adjust this value to control the amount of smoothing
-        // float filteredForce = MovingAvgFilter(focusSectionForce, smoothingFactor);
-
-        ///LowPass Filter
-        float filteredForce = lowPassFilter.Filt(focusSectionForce, filterOrder);
-
-        graph.addRealTimeDataToGraph(filteredForce) ;
-        //focusSectionForce or filteredForce
-
-        //Debug.Log("Added to the graph");
-
-        //string data = focusSectionForce.ToString();//testing 
+        graph.addRealTimeDataToGraph(focusSectionForce);
         
         output.text = "Focused Section: " + focusSectionIndex;
-        log.text = "Force: " + filteredForce;
-        //log.text = sensorDatainString;
+        log.text = "Force: " + focusSectionForce;
 
         sensors_loads1 = converted_data;
 
@@ -121,14 +86,14 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         }
         
     }
-
+    //Convert string input to float array
     private float[] ConvertedFloat(string inputData)
     {
         float[] convertData = new float[8]; 
         convertData = Array.ConvertAll(inputData.Split(','), float.Parse);
         return convertData;
     }
-
+    //compute vertebrae poses (for 3d modelling)
     private void computeVertebraePoses()
     {
         //Computing sections displacements and finding the section with the largest displacement in the same loop
@@ -188,6 +153,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         //    vertebrae.get(i).setRightDisplacement(rightDisp);
         //}
     }
+    //compute vertebrae loads (for 3d modelling)
     private void computeVertebraeLoads()
     {
         for (int i = 0; i < this.numSections; i++)
@@ -214,7 +180,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         //    vertebrae.get(i).setRightLoad(rightLoad);
         //}
     }
-
+    //Compute sensor displacement with distance
     private void computeDisplacementWithDistance()
     {
         for (int i = 0; i < sensors_displacements.Length; i++)
@@ -222,6 +188,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
             this.sensors_displacements[i] = this.converted_data[i] - this.sensors_loads1[i];
         }
     }
+    //Find the most engaged section based on displacement
     private void findSectionEngaged()
     {
         
@@ -239,10 +206,11 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
             }
         }
     }
-
+    //Compute force for a single sensor
     private float computeSensorForce(int sensorIndex)
     {
-        ///Kiichi
+        //Formula needs to be optimised 
+        //Different calculations based on stiffness settingd
         if(bluetoothManager.IsStiff){
             float sensorForce = (1 - this.converted_data[sensorIndex] / 40) * 146;
             
@@ -252,30 +220,15 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
             
             return sensorForce;
         }
-
-        ///Haining
-        // if(bluetoothManager.IsStiff){
-        //     float sensorForce = (1 - this.converted_data[sensorIndex] / 35) * 170.3f;
-        //     return sensorForce;
-        // } else{
-        //     float sensorForce = (1 - this.converted_data[sensorIndex] / 43) * 136.48f;
-        //     return sensorForce;
-        // }
-
-
-        
     }
-
+    //Compute force for a section (average of two sensors)
     private float computeSectionForce(int focusSectionIndex)
     {
         float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
         return force;
         
+        
+        
             
     }
-
-    // private float MovingAvgFilter(float currentForce, float smoothingFactor){
-    //     filteredForce = (smoothingFactor * currentForce) + ((1 - smoothingFactor) * filteredForce);
-    //     return filteredForce;
-    // }
 }

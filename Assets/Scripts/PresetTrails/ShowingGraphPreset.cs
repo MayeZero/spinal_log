@@ -16,9 +16,6 @@ public class ShowingGraphPreset : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //forceTrail = new List<float>();
-        //forceTrail = csvReader.srdCSVFile();
-        //realTimeForceInputPreset = new List<float>();
         InitChartWithTrail();
     }
 
@@ -26,13 +23,11 @@ public class ShowingGraphPreset : MonoBehaviour
     {
         this.forceTrail = csvReader.srdCSVFile();
         realTimeForceInputPreset = new List<float>();
-        //Debug.Log(forceTrail.Count);
-        //InitChartWithTrail();
     }
 
+    // Initialize the chart with trail data
     void InitChartWithTrail()
     {
-        //var chart = gameObject.GetComponent<LineChart>();
         if (chart == null)
         {
             chart = gameObject.AddComponent<LineChart>();
@@ -72,75 +67,39 @@ public class ShowingGraphPreset : MonoBehaviour
         chart.RemoveData();
         var serie0 = chart.AddSerie<Line>("PresetTrail");
         var serie1 = chart.AddSerie<Line>("InputForce2");
-        //var serie1 = chart.GetSerie<Line>(1);
+        
         serie0.symbol.show = false;
         serie1.symbol.show = false;
         for (int i = 0; i < forceTrail.Count; i++)
         {
-            //chart.AddXAxisData(Time.time);
-            //chart.AddXAxisData("x" + i);
-            //chart.AddData("CustomTrail", sldataManager.dataFromCustomTrail[i]);
             chart.AddData("PresetTrail", forceTrail[i]);
-            //chart.AddData("RealTimeData", dataManager.randomData[i]);
         }
     }
-
+    
+    
+    // Add real-time force data to the graph
     public void addRealTimeDataToGraph(float inputForce)
     {
-        //var chart = gameObject.GetComponent<LineChart>();
         var serie2 = chart.GetSerie("InputForce2");
         if (this.realTimeForceInputPreset.Count > forceTrail.Count)
         {
+            // Clear data if it exceeds the preset trail count
             realTimeForceInputPreset.Clear();
             serie2.ClearData();
         }
         else
         {
+            // Add new force data to the list and chart
             realTimeForceInputPreset.Add(inputForce);
             chart.AddData("InputForce2", inputForce);
         }
 
     }
 
-    // public void addCustomTrailToGraph()
-    // {
-        
-    //     //var chart = gameObject.GetComponent<LineChart>();
-    //     var serie0 = chart.GetSerie("PresetTrail");
-    //     var serie1 = chart.GetSerie("InputForce");
-    //     serie0.ClearData();
-    //     serie1.ClearData();
-        
-    //     for (int i = 0; i < forceTrail.Count; i++)
-    //     {
-    //         chart.AddData("PresetTrail", forceTrail[i]);
-
-    //     }
-    // }
-
+    // Clear real-time force data   
     public void cleanRealTimeData()
     {
         realTimeForceInputPreset.Clear();
     }
 
-    // public void cleanGraph()
-    // {
-    //     //var chart = gameObject.GetComponent<LineChart>();
-    //     var serie0 = chart.GetSerie("PresetTrail");
-    //     var serie1 = chart.GetSerie("InputForce");
-    //     serie0.ClearData();
-    //     serie1.ClearData();
-    // }
-
-    // public void loadData(TrailData data)
-    // {
-    //     this.forceTrail = data.forceTrail;
-    //     Debug.Log("DataLoaded");
-    // }
-
-    // public void SaveData(ref TrailData data)
-    // {
-    //     // save real time force trail to data.forceTrail
-    //     data.forceTrail = this.realTimeForceInput;
-    // }
 }

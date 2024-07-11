@@ -7,7 +7,7 @@ public class MainMenuButtons : MonoBehaviour
 {
     public void LoadShortTrail()
     {
-        SceneManager.LoadScene("Assets/Scenes/ShortTrial.unity");
+        SceneManager.LoadScene("Assets/Scenes/PracticeMode.unity");
         //SceneManager.LoadScene(1);
     }
 

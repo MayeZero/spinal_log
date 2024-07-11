@@ -46,7 +46,6 @@ public class BluetoothManager : MonoBehaviour
     // Start is called before the first frame update   
     void Start()
     {
-        //random = new System.Random();
         InitBluetooth();
         isConnected = false;
         IsStiff = false;
@@ -223,24 +222,7 @@ public class BluetoothManager : MonoBehaviour
         BluetoothConnector.CallStatic("Toast", data);
     }
 
-    // public void sendStiffnessStatus()
-    // {
-    //     if (Application.platform != RuntimePlatform.Android)
-    //         return;
-
-    //     if (isConnected)
-    //     {
-    //         if (IsStiff == true)
-    //         {
-    //             BluetoothConnector.CallStatic("WriteData", "stiff"); 
-    //         }
-    //         else
-    //         {
-    //             BluetoothConnector.CallStatic("WriteData", "default");
-    //         }
-    //     }
-    // }
-
+    // Function to connect paired device by one click
     public void ConnectToPairedDevice()
     {
         InitBluetooth();
@@ -262,27 +244,7 @@ public class BluetoothManager : MonoBehaviour
         }
     }
 
-    public void swtichStiffness(){
-        if (IsStiff){
-            isStiff = false;
-            Debug.Log(IsStiff);
-        }
 
-        else {
-            isStiff = true;
-            Debug.Log(IsStiff);
-        }
-    }
-
-    // private IEnumerator sCoroutine(float waitTime)
-    // {
-    //     while (true)
-    //     {
-    //         sendStiffnessStatus();
-    //         yield return new WaitForSeconds(waitTime);
-    //     }
-        
-    // }
     
     ///Testing, Generating random inputdata.///
     public void GenerateRandomData(){
