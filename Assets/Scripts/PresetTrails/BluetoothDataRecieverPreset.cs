@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro.Examples;
 using UnityEngine;
 using UnityEngine.Android;
@@ -30,6 +31,8 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
 
     private IEnumerator myCoroutine2;
 
+    private float initialAvgForce;
+
     void Start()
     {
         // Initialize variables and start data processing coroutine
@@ -51,6 +54,10 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         }
 
         focusSectionIndex = 0;
+        
+        // sensorDatainString = bluetoothManager.inputdata;
+        // converted_data = ConvertedFloat(sensorDatainString);
+        // initialAvgForce = 
 
         if (myCoroutine2 != null)
         {
@@ -65,6 +72,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     // Coroutine for continuous data processing 
     private IEnumerator DataProcessing(float waitTime)
     {
+
         while (true)
         {
         sensorDatainString = bluetoothManager.inputdata;
@@ -212,9 +220,11 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         //Formula needs to be optimised 
         //Different calculations based on stiffness settingd
         if(bluetoothManager.IsStiff){
-            float sensorForce = (1 - this.converted_data[sensorIndex] / 40) * 146;
             
+            float sensorForce = (1 - this.converted_data[sensorIndex] / 40) * 146;
             return sensorForce;
+        
+            
         } else{
             float sensorForce = (1 - this.converted_data[sensorIndex] / 30) * 219;
             
@@ -224,11 +234,15 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     //Compute force for a section (average of two sensors)
     private float computeSectionForce(int focusSectionIndex)
     {
-        float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-        return force;
-        
-        
-        
+        float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2 - 5.0f;
+        if (force <= 0.0f){
+            return 0.0f;
+        }else if (force >= 30){
+            return 30.0f;
+        }else{
+            return force; 
+        }
             
     }
 }
+
