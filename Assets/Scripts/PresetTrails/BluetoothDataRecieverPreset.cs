@@ -63,7 +63,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         {
             StopCoroutine(myCoroutine2);
         }
-        myCoroutine2 = DataProcessing(0.02f);
+        myCoroutine2 = DataProcessing(0.08f);
         Debug.Log("my coroutine set");
         StartCoroutine(myCoroutine2);
         Debug.Log("Coroutine2 started");
@@ -84,7 +84,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         float focusSectionForce = computeSectionForce(focusSectionIndex);
 
         graph.addRealTimeDataToGraph(focusSectionForce);
-        
+        Debug.Log("Force preset: " + focusSectionForce);
         output.text = "Focused Section: " + focusSectionIndex;
         log.text = "Force: " + focusSectionForce;
 
