@@ -63,12 +63,6 @@ public class MonoBoneScript : MonoBehaviour
     }
 
 
-    [ContextMenu("rotate")]
-
-    public void rotate()
-    {
-        //transform.RotateAround(transform.position, new Vector3(0, 1, 0), 30.0f);
-    }
 
 
 }

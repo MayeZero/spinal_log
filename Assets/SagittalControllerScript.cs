@@ -27,10 +27,11 @@ public class SagittalControllerScript : MonoBehaviour
         //bones.Add(L3Bone);
         //bones.Add(L4Bone);
         //bones.Add(L5Bone);
-        bones[0] = L2Bone;
-        bones[1] = L3Bone;
-        bones[2] = L4Bone;
-        bones[3] = L5Bone;
+        bones[0] = L1Bone;
+        bones[1] = L2Bone;
+        bones[2] = L3Bone;
+        bones[3] = L4Bone;
+        bones[4] = L5Bone;
         force = 0.5f;
 
 
@@ -71,11 +72,12 @@ public class SagittalControllerScript : MonoBehaviour
     [ContextMenu("Move down curve")]
     public void moveCurveBone()
     {
+        int myEngaged = engagedSection + 1;
         resetPosition();
         for (int i = 0; i < bones.Length; i++)
         {
-            Debug.Log(force / (Mathf.Abs(i - engagedSection) + 1)); // Prints numbers from 0 to 9
-            bones[i].moveDown(force / (Mathf.Abs(i - engagedSection) + 1));
+            Debug.Log(force / (Mathf.Abs(i - myEngaged) + 1)); // Prints numbers from 0 to 9
+            bones[i].moveDown(force / (Mathf.Abs(i - myEngaged) + 1));
         }
     }
 
@@ -95,6 +97,14 @@ public class SagittalControllerScript : MonoBehaviour
             bones[i].moveDown(value / (Mathf.Abs(i - engagedSection) + 1));
         }
     }
+
+    //public void initializePosition()
+    //{
+    //    for (int i = 0; i < bones.Length; i++)
+    //    {
+    //        bones[i].
+    //    }
+    //}
 
 
 

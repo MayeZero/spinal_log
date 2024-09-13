@@ -41,9 +41,10 @@ public class BluetoothDataReceiver : MonoBehaviour
     {
         sagittalController = FindObjectOfType<SagittalControllerScript>();
         Debug.Log("Found sagittal: " + sagittalController);
-        //bones[0] = sagittalController.L1Bone;
+        tranverseController = FindObjectOfType<TranverseControllerScript>();
+        Debug.Log("Found sagittal: " + tranverseController);
 
-        
+
         bluetoothManager = FindObjectOfType<BluetoothManager>();
         Debug.Log("found bluetooth manager: " + bluetoothManager);
         
@@ -72,7 +73,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         {
             StopCoroutine(myCoroutine);
         }
-        myCoroutine = DataProcessing(0.02f);
+        myCoroutine = DataProcessing(0.08f);
         StartCoroutine(myCoroutine);
 
     }
@@ -92,14 +93,15 @@ public class BluetoothDataReceiver : MonoBehaviour
 
         // sectional displacement change
         Debug.Log("sectional displacement: " + sectional_displacements);
-        sagittalBonesMovement(0.1f, 0.5f); // option 1: move with mapping value to each bone section
+        //sagittalBonesMovement(30, 0.5f); // option 1: move with mapping value to each bone section
 
         this.focusSectionForce = computeSectionForce(focusSectionIndex); // compute force for graph visualisation 
-        sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
+        // sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
+        sagittalBoneMovementV2(focusSectionIndex, focusSectionForce/30, 0.5f); // still option 2, but with curation
+        tranverseBonesMovement(focusSectionIndex);
+        
         graphYT.addRealTimeDataToGraph(focusSectionForce) ;
-
         string data = focusSectionForce.ToString();//testing 
-        //string sensorsDisplacementsString = string.Join(", ", sensors_displacements);
         
         output.text = "Focused Section: " + focusSectionIndex;
         log.text = "Force: " + focusSectionForce;
@@ -213,17 +215,28 @@ public class BluetoothDataReceiver : MonoBehaviour
 
     private float computeSectionForce(int focusSectionIndex)
     {
-        float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-        if (force < 15.0f){
-            force = 0.1f;
+        //float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
+        //if (force < 15.0f){
+        //    force = 0.1f;
+        //}
+
+        //return force;
+        float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2 - 5.0f;
+        if (force <= 0.0f)
+        {
+            return 0.0f;
+        }
+        else if (force >= 30)
+        {
+            return 30.0f;
+        }
+        else
+        {
+            return force;
         }
 
-        return force;
-
-        
-        
         //this.focusSectionForce = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-            
+
     }
 
     /// <summary>
@@ -233,23 +246,47 @@ public class BluetoothDataReceiver : MonoBehaviour
     /// <param name="threshold"> maximum movement value </param>
     private void sagittalBonesMovement(float denominator, float threshold)
     {
-        for (int i = 0; i < sagittalController.bones.Length; i++)
+        sagittalController.resetPosition();
+        for (int i = 0; i < sectional_change.Length; i++)
         {
-            float value = sectional_change[i] / denominator;
+            //float value = sectional_change[i] / denominator;
+            float value = computeSectionForce(i)/denominator;
             if (Math.Abs(value) > threshold)
             {
                 value = threshold;
             }
-            value = (float)Math.Round(value, 2);
-            sagittalController.bones[i].moveDown(value);
+            value = (float)Math.Round(value, 1);
+            sagittalController.bones[i+1].moveDown(value);
         }
     }
 
 
-    private void tranverseBonesMovement()
+    private void tranverseBonesMovement(int focusSectionIndex)
     {
-
+        float leftForce = computeSensorForce(focusSectionIndex * 2 + 0);
+        float rightForce = computeSensorForce(focusSectionIndex * 2 + 1);
+        if (leftForce > rightForce)
+        {
+            tranverseController.rotate("left", focusSectionIndex, leftForce);
+        } else
+        {
+            tranverseController.rotate("right", focusSectionIndex, rightForce);
+        }
     }
+
+
+    private void sagittalBoneMovementV2(int focusSectionIndex, float force, float threshold)
+    {
+        sagittalController.resetPosition();
+        if (Math.Abs(force) >= threshold)
+        {
+            sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
+        } else if (Math.Abs(force) >= 0.3)
+        {
+            sagittalController.moveCurveBone(0.2f, focusSectionIndex);
+        }
+    }
+
 
 
 

@@ -6,6 +6,8 @@ public class RotateBoneScript : MonoBehaviour
 {
     [SerializeField] float rotationSpeed = 120f;
     Quaternion initialRotation;
+    [SerializeField] MeshRenderer meshRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,12 +15,16 @@ public class RotateBoneScript : MonoBehaviour
         Debug.Log("rotation" + Quaternion.identity);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        //moveRight();  
+        initialRotation = transform.localRotation;
     }
 
+    [ContextMenu("Move right bone")]
+    public void moveRightBone()
+    {
+        transform.Rotate(Vector3.right, rotationSpeed * Time.deltaTime);
+    }
 
     public void moveRight(float rotationSpeed)
     {
@@ -34,6 +40,11 @@ public class RotateBoneScript : MonoBehaviour
     public void resetRotation()
     {
         transform.localRotation = initialRotation;
+    }
+
+    public void SetActive(bool active)
+    {
+        this.meshRenderer.enabled = active;
     }
 
 }

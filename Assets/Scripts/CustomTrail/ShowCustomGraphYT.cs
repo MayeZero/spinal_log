@@ -48,12 +48,18 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         //xAxis.type = Axis.AxisType.Time;
         xAxis.minMaxType = Axis.AxisMinMaxType.Custom;
         xAxis.min = 0;
-        xAxis.max = 1500;
-        xAxis.interval = 50;
+        //xAxis.max = 1500;
+        xAxis.max = 300;
+        xAxis.interval = 30;  // 50
+
         //xAxis.type = Axis.AxisType.Category;
         yAxis.type = Axis.AxisType.Value;
+        yAxis.minMaxType = Axis.AxisMinMaxType.Custom;
+        yAxis.min = 0;
+        yAxis.max = 30;
+        yAxis.interval = yAxis.max / 5;
 
-        xAxis.splitNumber = 1500;
+        xAxis.splitNumber = 300;  // 1500
         xAxis.boundaryGap = false;
 
         chart.RemoveData();
@@ -76,7 +82,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
     {
         //var chart = gameObject.GetComponent<LineChart>();
         var serie1 = chart.GetSerie("InputForce");
-        if (this.realTimeForceInput.Count > 1500)
+        if (this.realTimeForceInput.Count > 300)
         {
             realTimeForceInput.Clear();
         }
@@ -85,7 +91,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
             realTimeForceInput.Add(inputForce);
         }
 
-        if (serie1.dataCount > 1500)
+        if (serie1.dataCount > 300)
         {
             serie1.ClearData();
         }

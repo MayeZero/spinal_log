@@ -7,6 +7,7 @@ public class DataPersistenceManager : MonoBehaviour
 {
     [SerializeField] private string fileName;
 
+    int fileCount = 0;
 
     private TrailData trailData;
 
@@ -74,6 +75,23 @@ public class DataPersistenceManager : MonoBehaviour
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>();
         return new List<IDataPersistence>(dataPersistenceObjects);
+    }
+
+
+    public void setFileName(string filename = null)
+    {
+        if (filename == null)
+        {
+            filename = fileName;
+        }
+
+        this.dataHandler.setPath(filename);
+    }
+
+
+    public string getFileName()
+    {
+        return this.dataHandler.getPath();
     }
 
 

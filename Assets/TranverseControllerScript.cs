@@ -5,13 +5,14 @@ using UnityEngine;
 public class TranverseControllerScript : MonoBehaviour
 {
 
-    public float rotationSpeed = 100f;
+    public float rotationSpeed = 1000f;
     public RotateBoneScript L1Bone;
     public RotateBoneScript L2Bone;
     public RotateBoneScript L3Bone;
     public RotateBoneScript L4Bone;
     public RotateBoneScript L5Bone;
     public int engaged = 0;
+    public string rotateDir = "left";
     public RotateBoneScript[] bones = new RotateBoneScript[5];
 
     // Start is called before the first frame update
@@ -45,22 +46,43 @@ public class TranverseControllerScript : MonoBehaviour
     {
         foreach (var bone in bones)
         {
+            bone.SetActive(true);
             bone.resetRotation();
         }
 
     }
 
 
-    [ContextMenu("Move right")]
-    public void moveRight()
+    [ContextMenu("Move bone")]
+    public void rotateBone()
     {
-        bones[engaged].moveRight(rotationSpeed);
+        rotate(rotateDir, engaged, rotationSpeed);
     }
 
-    [ContextMenu("Move left")]
-    public void moveLeft()
+
+
+
+    public void rotate(string direction, int index, float rotationSpeed)
     {
-        bones[engaged].moveLeft(rotationSpeed);
+        resetRotation();
+        for (int i = 0; i < bones.Length; i++)
+        {
+            if (i != index)
+            {
+                bones[i].SetActive(false);
+            }
+        }
+
+        bones[index].SetActive(true);
+
+        if (direction.ToLower() == "left")
+        {
+            bones[index].moveLeft(rotationSpeed);
+        } else
+        {
+            bones[index].moveRight(rotationSpeed);
+        }
     }
+
 
 }
