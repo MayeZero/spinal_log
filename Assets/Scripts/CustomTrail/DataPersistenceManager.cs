@@ -2,18 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 
 public class DataPersistenceManager : MonoBehaviour
 {
     [SerializeField] private string fileName;
 
-    int fileCount = 0;
+    int fileCount = 1;
 
     private TrailData trailData;
 
     private List<IDataPersistence> dataPersistenceObjects;
 
     private FileDataHandler dataHandler;
+
     public static DataPersistenceManager instance { get; private set; }
 
     private void Awake()
@@ -92,6 +94,13 @@ public class DataPersistenceManager : MonoBehaviour
     public string getFileName()
     {
         return this.dataHandler.getPath();
+    }
+
+    public string makeNewFile()
+    {
+        string filename = "data" + fileCount + ".csv";
+        fileCount += 1;
+        return filename;
     }
 
 
