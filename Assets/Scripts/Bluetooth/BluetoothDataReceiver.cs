@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
@@ -98,7 +99,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         this.focusSectionForce = computeSectionForce(focusSectionIndex); // compute force for graph visualisation 
         // sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
         sagittalBoneMovementV2(focusSectionIndex, focusSectionForce/30, 0.5f); // still option 2, but with curation
-        tranverseBonesMovement(focusSectionIndex);
+        tranverseBonesMovementVisualiser(focusSectionIndex);
         
         graphYT.addRealTimeDataToGraph(focusSectionForce) ;
         string data = focusSectionForce.ToString();//testing 
@@ -215,12 +216,6 @@ public class BluetoothDataReceiver : MonoBehaviour
 
     private float computeSectionForce(int focusSectionIndex)
     {
-        //float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-        //if (force < 15.0f){
-        //    force = 0.1f;
-        //}
-
-        //return force;
         float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2 - 5.0f;
         if (force <= 0.0f)
         {
@@ -234,8 +229,6 @@ public class BluetoothDataReceiver : MonoBehaviour
         {
             return force;
         }
-
-        //this.focusSectionForce = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
 
     }
 
@@ -261,16 +254,34 @@ public class BluetoothDataReceiver : MonoBehaviour
     }
 
 
-    private void tranverseBonesMovement(int focusSectionIndex)
+    /// <summary>
+    /// Perform tranverse bone movement visualisation given section index and force
+    /// </summary>
+    /// <param name="focusSectionIndex"></param>
+    private void tranverseBonesMovementVisualiser(int focusSectionIndex)
     {
+        float MAX_ANGLE = 0.1f;
         float leftForce = computeSensorForce(focusSectionIndex * 2 + 0);
         float rightForce = computeSensorForce(focusSectionIndex * 2 + 1);
-        if (leftForce > rightForce)
+
+
+        // If there is not much different on force applying on both side, ignore 
+        if (Math.Abs(leftForce - rightForce) <= 1)
         {
-            tranverseController.rotate("left", focusSectionIndex, leftForce);
-        } else
-        {
-            tranverseController.rotate("right", focusSectionIndex, rightForce);
+            return;
+        }
+
+
+        float force = Math.Min(17, Math.Max(leftForce, rightForce));
+        if (force >= 10)
+        {   
+            float angle = MAX_ANGLE * force/17f;
+            if (leftForce > rightForce)
+            {
+                angle = -angle;
+            } 
+            
+            tranverseController.rotate(focusSectionIndex, angle);
         }
     }
 

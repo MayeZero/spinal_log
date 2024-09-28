@@ -3,39 +3,20 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
+using XCharts.Runtime;
 
 public class ButtonsHandllers : MonoBehaviour
 {
-    public float timeLeft = 24f;
-    public bool timerOn = false;
+    public float timeLeft = 10;
+    public static bool timerOn = false;
     public TMP_Text timerTxt;
 
-    // Start is called before the first frame update
 
-    //void Update()
-    //{
-    //    if (timerOn)
-    //    {
-    //        if (timeLeft > 0)
-    //        {
-    //            timeLeft -= Time.deltaTime;
-    //            timerTxt.text = "Seconds left: " + timeLeft.ToString();
-    //        } else
-    //        {
-    //            DataPersistenceManager.instance.SaveGraph();
-    //            timerTxt.text = "Data saved to:" + DataPersistenceManager.instance.getFileName();
-    //            timeLeft = 0;
-    //            timerOn = false;
-    //        }
-    //    }
-    //}
-
-
-    public void OnSaveButtonClicked()
+    public static void OnSaveButtonClicked()
     {
         timerOn = true;
-        timeLeft = 24f;
-        DataPersistenceManager.instance.SaveGraph();
+        ButtonBlinkEffect.onRecord = true;
 
     }
 
@@ -49,13 +30,49 @@ public class ButtonsHandllers : MonoBehaviour
         DataPersistenceManager.instance.NewGraph();
     }
 
-    public void LoadMainMenu()
+    public static bool activated()
     {
-        SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
+        return timerOn;
     }
 
-    //private void savingGraph()
+
+    /// <summary>
+    /// Save graph to data
+    /// </summary>
+    public static void saveGraph()
+    {
+        DataPersistenceManager.instance.SaveGraph();
+        timerOn = false;
+        ButtonBlinkEffect.onRecord = false;
+    }
+
+
+
+
+
+
+    //public static void LoadMainMenu()
     //{
+    //    SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
+    //}
+
+    //void DoDelayAction()
+    //{
+    //    StartCoroutine(DelayAction());
+    //}
+    //IEnumerator DelayAction()
+    //{
+    //    //Wait for the specified delay time before continuing.
+    //    while (timeLeft > 0)
+    //    {
+    //        timerTxt.text = "Seconds left: " + ((int)timeLeft);
+    //        timeLeft -= Time.deltaTime; //we where never changing the firetime
+    //        yield return null;
+    //    }
+
+    //    //Do the action after the delay time has finished.
     //    DataPersistenceManager.instance.SaveGraph();
     //}
+
+
 }

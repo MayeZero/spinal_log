@@ -82,6 +82,15 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
     {
         //var chart = gameObject.GetComponent<LineChart>();
         var serie1 = chart.GetSerie("InputForce");
+
+        if ((this.realTimeForceInput.Count > 299 || serie1.dataCount > 299) && ButtonsHandllers.activated())
+        {
+            // Save data at end point when save button is clicked
+            ButtonsHandllers.saveGraph();
+ 
+        }
+
+
         if (this.realTimeForceInput.Count > 300)
         {
             realTimeForceInput.Clear();

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RotateBoneScript : MonoBehaviour
 {
-    [SerializeField] float rotationSpeed = 120f;
+    [SerializeField] float rotationSpeed = 0.05f;
     Quaternion initialRotation;
     [SerializeField] MeshRenderer meshRenderer;
 
@@ -23,7 +23,7 @@ public class RotateBoneScript : MonoBehaviour
     [ContextMenu("Move right bone")]
     public void moveRightBone()
     {
-        transform.Rotate(Vector3.right, rotationSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
     }
 
     public void moveRight(float rotationSpeed)
@@ -35,6 +35,15 @@ public class RotateBoneScript : MonoBehaviour
     {
         transform.Rotate(Vector3.down * rotationSpeed * Time.deltaTime);
     }
+
+
+
+    public void rotateDegree(float degree)
+    {
+       transform.localRotation = Quaternion.Euler(0, degree * 500f, 0f);
+    }
+
+
 
     [ContextMenu("reset rotation")]
     public void resetRotation()
