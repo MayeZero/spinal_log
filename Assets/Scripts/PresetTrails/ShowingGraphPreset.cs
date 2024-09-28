@@ -11,7 +11,8 @@ public class ShowingGraphPreset : MonoBehaviour
     
     private List<float> forceTrail;
     private List<float> realTimeForceInputPreset;
-    
+    private string filename = "expertTrial.csv";
+
 
     // Start is called before the first frame update
     void Start()
@@ -21,12 +22,12 @@ public class ShowingGraphPreset : MonoBehaviour
 
     private void Awake()
     {
-        this.forceTrail = csvReader.srdCSVFile();
+        this.forceTrail = csvReader.srdCSVFile(filename);
         realTimeForceInputPreset = new List<float>();
     }
 
     // Initialize the chart with trail data
-    void InitChartWithTrail()
+    public void InitChartWithTrail()
     {
         if (chart == null)
         {
@@ -100,6 +101,15 @@ public class ShowingGraphPreset : MonoBehaviour
     public void cleanRealTimeData()
     {
         realTimeForceInputPreset.Clear();
+    }
+
+
+    public void resetToFile(string filename)
+    {
+        this.filename = filename;
+        this.forceTrail = csvReader.srdCSVFile(filename);
+        realTimeForceInputPreset = new List<float>();
+        InitChartWithTrail();
     }
 
 }

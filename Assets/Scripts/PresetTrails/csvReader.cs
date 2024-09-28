@@ -24,20 +24,26 @@ public class csvReader : MonoBehaviour
 
     
 
-    public static List<float> srdCSVFile()
+    public static List<float> srdCSVFile(String filename = null)
     {
         List<float> records = new List<float>();
-
+        
+        if (filename == null)
+        {
+            filename = "expertTrial.csv";
+        }
         
 
-        string sFilePath = Path.Combine(Application.streamingAssetsPath, "expertTrial_short.csv");
+        string sFilePath = Path.Combine(Application.streamingAssetsPath, filename);
         
         if (Application.platform == RuntimePlatform.Android)
         {
             try
             {
-                TextAsset csvFile = Resources.Load<TextAsset>("expertTrial_short");
-string[] csvLines = csvFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                //TextAsset csvFile = Resources.Load<TextAsset>("expertTrial_short");
+                TextAsset csvFile = Resources.Load<TextAsset>(filename.Substring(0, filename.Length - 4));
+
+                string[] csvLines = csvFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
 records = new List<float>();
 
@@ -69,7 +75,7 @@ for (int i = 1; i < csvLines.Length; i++)
             
             ///OLD Version reading csv///
 
-            string filePath = Application.streamingAssetsPath + "/expertTrial.csv";
+            string filePath = Application.streamingAssetsPath + "/" + filename;
             Debug.Log("loaded file: " + filePath);
             //Debug.Log(Application.persistentDataPath);
             //using (StreamReader reader = new StreamReader("Assets/Trials/expertTrial_short.csv"))
