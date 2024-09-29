@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,15 +9,22 @@ using XCharts.Runtime;
 
 public class ButtonsHandllers : MonoBehaviour
 {
-    public float timeLeft = 10;
-    public static bool timerOn = false;
-    public TMP_Text timerTxt;
+    public float countdown = 3f;
+    [SerializeField] RecordingPanelScript recordingPanel;
+    [SerializeField] ShowCustomGraphYT graph;
 
-
-    public static void OnSaveButtonClicked()
+    public static void LoadMainMenu()
     {
-        timerOn = true;
-        ButtonBlinkEffect.onRecord = true;
+        SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
+    }
+
+
+    public void OnSaveButtonClicked()
+    {
+        DataPersistenceManager.instance.NewGraph();
+        graph.cleanGraph();
+        recordingPanel.startRecord();
+ 
 
     }
 
@@ -30,20 +38,19 @@ public class ButtonsHandllers : MonoBehaviour
         DataPersistenceManager.instance.NewGraph();
     }
 
-    public static bool activated()
+    public bool activated()
     {
-        return timerOn;
+        return RecordingPanelScript.onRecord;
     }
 
 
     /// <summary>
     /// Save graph to data
     /// </summary>
-    public static void saveGraph()
+    public void saveGraph()
     {
         DataPersistenceManager.instance.SaveGraph();
-        timerOn = false;
-        ButtonBlinkEffect.onRecord = false;
+        recordingPanel.stopRecord();
     }
 
 
@@ -51,28 +58,25 @@ public class ButtonsHandllers : MonoBehaviour
 
 
 
-    //public static void LoadMainMenu()
-    //{
-    //    SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
-    //}
 
-    //void DoDelayAction()
+    //IEnumerator DoTimer(float counttime = 1f)
     //{
-    //    StartCoroutine(DelayAction());
-    //}
-    //IEnumerator DelayAction()
-    //{
-    //    //Wait for the specified delay time before continuing.
-    //    while (timeLeft > 0)
+    //    int count = 0;
+    //    while (timerOn)
     //    {
-    //        timerTxt.text = "Seconds left: " + ((int)timeLeft);
-    //        timeLeft -= Time.deltaTime; //we where never changing the firetime
-    //        yield return null;
+    //        yield return new WaitForSeconds(counttime);
+    //        count ++;
+    //        TimeSpan time = TimeSpan.FromSeconds(count);
+    //        string formattedTime = time.ToString(@"mm\:ss");
+    //        timerTxt.text = formattedTime;
     //    }
-
-    //    //Do the action after the delay time has finished.
-    //    DataPersistenceManager.instance.SaveGraph();
     //}
+
+    //void newTimer()
+    //{
+    //    StartCoroutine(DoTimer());
+    //}
+
 
 
 }

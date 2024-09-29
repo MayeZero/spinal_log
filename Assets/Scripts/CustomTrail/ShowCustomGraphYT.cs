@@ -8,6 +8,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
 {
 
     [SerializeField] LineChart chart;
+    [SerializeField] ButtonsHandllers buttonsHandllers;
     
     private List<float> forceTrail;
     private List<float> realTimeForceInput;
@@ -83,10 +84,10 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
         //var chart = gameObject.GetComponent<LineChart>();
         var serie1 = chart.GetSerie("InputForce");
 
-        if ((this.realTimeForceInput.Count > 299 || serie1.dataCount > 299) && ButtonsHandllers.activated())
+        if ((this.realTimeForceInput.Count > 299 || serie1.dataCount > 299) && buttonsHandllers.activated())
         {
             // Save data at end point when save button is clicked
-            ButtonsHandllers.saveGraph();
+            buttonsHandllers.saveGraph();
  
         }
 
