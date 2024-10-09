@@ -65,6 +65,8 @@ public class TranverseControllerScript : MonoBehaviour
     public void rotate(int index, float degree)
     {
         resetRotation();
+
+        // hide all unfocused bones 
         for (int i = 0; i < bones.Length; i++)
         {
             if (i != index)
@@ -77,55 +79,6 @@ public class TranverseControllerScript : MonoBehaviour
         bones[index].rotateDegree(degree);
     }
 
-    //public void Rotation(float leftDepth, float rightDepth)
-    //{
-    //    float yDegree = TransverseRotationDegree(leftDepth, rightDepth);
-    //    //UnityDebug.Log("xDegree: " + xDegree);
-    //    //UnityDebug.Log("yDegree: " + yDegree);
-    //    Vector3 newRotation = transform.localEulerAngles;
-    //    newRotation.y = yDegree;
-    //    //transform.localEulerAngles = newRotation;
-    //    //UnityDebug.Log(boneID + " localEulerAngles: " + transform.localEulerAngles);          
-    //    transform.localRotation = Quaternion.Euler(xDegree * 400f, yDegree * 500f, 0f);
-    //    //transform.Rotate(xDegree*40000f, 0, 0, Space.Self);
-    //}
-
-
-    public float TransverseRotationDegree(float initialLeftDepth, float leftDepth, float rightDepth)
-    { //transverse rotation
-        float halfDistance = System.Math.Abs(leftDepth - rightDepth) / 2;
-        float rotateAngle = 0;
-        int boneLength = 50;
-
-        if (initialLeftDepth - leftDepth <= 0.02)
-        {
-            return rotateAngle;
-        }
-        else
-        {
-            if (leftDepth == 0 || rightDepth == 0)
-            {
-                rotateAngle = Mathf.Sin(leftDepth / boneLength);
-            }
-            else
-            {
-                rotateAngle = Mathf.Sin(halfDistance / boneLength);
-            }
-
-            if (leftDepth > rightDepth)
-            {
-                //bone.transform.localRotation = Quaternion.Euler(0f, rotateAngle *500f, 0f);
-                //UnityDebug.Log("----origin: " + originalDegree + ", rotateAngle: " + rotateAngle);
-                return rotateAngle;
-            }
-            else
-            {
-                //bone.transform.localRotation = Quaternion.Euler(0f, -rotateAngle *500f, 0f);
-                //UnityDebug.Log("----origin: " + originalDegree + ", rotateAngle: " + -rotateAngle);
-                return -rotateAngle;
-            }
-        }
-    }
 
 
 }

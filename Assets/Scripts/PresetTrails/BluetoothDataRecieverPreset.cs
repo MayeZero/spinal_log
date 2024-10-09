@@ -16,6 +16,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     [SerializeField] Text output;
     [SerializeField] Text log;
 
+    public bool Available = false;
     public string sensorDatainString;
 
     public float[] converted_data = new float[8];
@@ -37,6 +38,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     {
         // Initialize variables and start data processing coroutine
         bluetoothManager = FindObjectOfType<BluetoothManager>();
+        Available = true;
 
         numSections = 4;
         numSensors = 8;

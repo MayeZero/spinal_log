@@ -15,19 +15,23 @@ public class RecordingPanelScript : MonoBehaviour
     public float speed = 1;
     public static bool onRecord = false;
     public TMP_Text timerTxt;
+    [SerializeField] TMP_Text recTxt;
     Coroutine coroutine;
 
     [SerializeField] Image blinkingButton;
 
-    //void Awake()
-    //{
-    //    imgComp = GetComponent<Image>();
-    //}
+    void Awake()
+    {
+        recTxt.enabled = false;
+        stopRecord(); // reset record
+
+    }
 
     void Update()
     {
         if (onRecord)
         {
+            // blinking red button 
             blinkingButton.color = Color.Lerp(startColor, endColor, Mathf.PingPong(Time.time * speed, 1));
         }
  
@@ -48,7 +52,9 @@ public class RecordingPanelScript : MonoBehaviour
 
     public void startRecord()
     {
+        // time for recording
         onRecord = true;
+        recTxt.enabled = true;
         coroutine = StartCoroutine(DoTimer());
     }
 
@@ -56,8 +62,12 @@ public class RecordingPanelScript : MonoBehaviour
     public void stopRecord()
     {
         onRecord = false;
+        recTxt.enabled = false;
         blinkingButton.color = Color.red;
-        StopCoroutine(coroutine);
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
     }
 
 

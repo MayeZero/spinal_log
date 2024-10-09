@@ -13,12 +13,14 @@ public class BluetoothDataReceiver : MonoBehaviour
     private BluetoothManager bluetoothManager;
     SagittalControllerScript sagittalController;
     TranverseControllerScript tranverseController;
+    private bool firstConnection = true;
     
     [SerializeField] Text output;
     [SerializeField] Text log;
     [SerializeField] Text change;
 
     public string sensorDatainString;
+    public bool Available = false;
 
     public float[] converted_data = new float[8];
     public float[] sensors_loads1 = new float[8];
@@ -48,6 +50,7 @@ public class BluetoothDataReceiver : MonoBehaviour
 
         bluetoothManager = FindObjectOfType<BluetoothManager>();
         Debug.Log("found bluetooth manager: " + bluetoothManager);
+        Available = true;
         
         toggle.isOn = bluetoothManager.IsStiff;
         numSections = 4;
@@ -98,7 +101,7 @@ public class BluetoothDataReceiver : MonoBehaviour
 
         this.focusSectionForce = computeSectionForce(focusSectionIndex); // compute force for graph visualisation 
         // sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
-        sagittalBoneMovementV2(focusSectionIndex, focusSectionForce/30, 0.5f); // still option 2, but with curation
+        sagittalBoneMovementV2(focusSectionIndex, focusSectionForce, 17f); // still option 2, but with curation
         tranverseBonesMovementVisualiser(focusSectionIndex);
         
         graphYT.addRealTimeDataToGraph(focusSectionForce) ;
@@ -106,7 +109,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         
         output.text = "Focused Section: " + focusSectionIndex;
         log.text = "Force: " + focusSectionForce;
-        change.text = "Change: " + sectional_change[focusSectionIndex];
+        //change.text = "Change: " + sectional_change[focusSectionIndex];
 
         sensors_loads1 = converted_data;
 
@@ -239,10 +242,9 @@ public class BluetoothDataReceiver : MonoBehaviour
     /// <param name="threshold"> maximum movement value </param>
     private void sagittalBonesMovement(float denominator, float threshold)
     {
-        sagittalController.resetPosition();
+        sagittalController.resetPosition(); // reset position 
         for (int i = 0; i < sectional_change.Length; i++)
         {
-            //float value = sectional_change[i] / denominator;
             float value = computeSectionForce(i)/denominator;
             if (Math.Abs(value) > threshold)
             {
@@ -261,10 +263,40 @@ public class BluetoothDataReceiver : MonoBehaviour
     private void tranverseBonesMovementVisualiser(int focusSectionIndex)
     {
         float MAX_ANGLE = 0.1f;
+        //float leftDepth = this.sensors_displacements[focusSectionIndex * 2 + 0];
+        //float rightDepth = this.sensors_displacements[focusSectionIndex * 2 + 1];        
+        //float halfDistance = Math.Abs(leftDepth - rightDepth)/2;
+        //float rotateAngle = 0;
+        //int boneLength = 50;
+
+
+
+        //if (halfDistance > 0.02)
+        //{
+        //    if (leftDepth == 0 || rightDepth == 0)
+        //    {
+        //        rotateAngle = Mathf.Sin(leftDepth / boneLength);
+        //    }
+        //    else
+        //    {
+        //        rotateAngle = Mathf.Sin(halfDistance / boneLength);
+        //    }
+
+        //    if (leftDepth < rightDepth)
+        //    {
+        //        //bone.transform.localRotation = Quaternion.Euler(0f, -rotateAngle *500f, 0f);
+        //        //UnityDebug.Log("----origin: " + originalDegree + ", rotateAngle: " + -rotateAngle);
+        //        rotateAngle = -rotateAngle;
+        //    }
+
+        //    tranverseController.rotate(focusSectionIndex, rotateAngle);
+        //}
+
+
+
+
         float leftForce = computeSensorForce(focusSectionIndex * 2 + 0);
         float rightForce = computeSensorForce(focusSectionIndex * 2 + 1);
-
-
         // If there is not much different on force applying on both side, ignore 
         if (Math.Abs(leftForce - rightForce) <= 1)
         {
@@ -272,15 +304,15 @@ public class BluetoothDataReceiver : MonoBehaviour
         }
 
 
-        float force = Math.Min(17, Math.Max(leftForce, rightForce));
-        if (force >= 10)
-        {   
-            float angle = MAX_ANGLE * force/17f;
+        float force = Math.Min(17, Math.Max(leftForce, rightForce)); // upper constrant 
+        if (force >= 5)
+        {
+            float angle = MAX_ANGLE * force / 17f;
             if (leftForce > rightForce)
             {
                 angle = -angle;
-            } 
-            
+            }
+
             tranverseController.rotate(focusSectionIndex, angle);
         }
     }
@@ -289,13 +321,19 @@ public class BluetoothDataReceiver : MonoBehaviour
     private void sagittalBoneMovementV2(int focusSectionIndex, float force, float threshold)
     {
         sagittalController.resetPosition();
-        if (Math.Abs(force) >= threshold)
+        force = force / threshold * 0.5f;
+        if (force < 0.1)
         {
-            sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
-        } else if (Math.Abs(force) >= 0.3)
-        {
-            sagittalController.moveCurveBone(0.2f, focusSectionIndex);
+            return;
         }
+        sagittalController.moveCurveBone(force, focusSectionIndex);
+        //if (Math.Abs(force) >= threshold)
+        //{
+        //    sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
+        //} else if (Math.Abs(force) >= 0.3)
+        //{
+        //    sagittalController.moveCurveBone(0.2f, focusSectionIndex);
+        //}
     }
 
 

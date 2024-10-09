@@ -23,6 +23,18 @@ public class DropDownScript : MonoBehaviour
         countIndex = 1;
     }
 
+    private void Awake()
+    {
+        int fileCount = DataPersistenceManager.instance.getFileCount();
+        Debug.Log("Total recorded files: " + fileCount);
+        for (int i = 2; i < fileCount + 1; i++)
+        {
+            addNewOption(i);
+        }
+
+        countIndex = fileCount;
+    }
+
 
     public void DropdownSample()
     {

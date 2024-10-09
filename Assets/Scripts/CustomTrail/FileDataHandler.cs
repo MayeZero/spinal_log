@@ -98,7 +98,7 @@ public class FileDataHandler
 
     public string getPath()
     {
-        return dataFileName;
+        return dataDirPath + "/" + dataFileName;
     }
 
 }

@@ -1750,6 +1750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chart: {fileID: 14488376}
+  buttonsHandllers: {fileID: 0}
 --- !u!1 &19913226
 GameObject:
   m_ObjectHideFlags: 0
@@ -4287,6 +4288,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5335a13bb61f3428dfd5d29859197f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  countdown: 3
+  recordingPanel: {fileID: 0}
+  graph: {fileID: 0}
 --- !u!114 &564972443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4441,6 +4445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 120
+  meshRenderer: {fileID: 0}
 --- !u!23 &569685666
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4864,6 +4869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 120
+  meshRenderer: {fileID: 0}
 --- !u!23 &608844568
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7456,6 +7462,7 @@ MonoBehaviour:
   log: {fileID: 1763545729}
   change: {fileID: 0}
   sensorDatainString: 
+  Available: 0
   converted_data:
   - 0
   - 0
@@ -7998,6 +8005,7 @@ MonoBehaviour:
   L4Bone: {fileID: 1341256778}
   L5Bone: {fileID: 1829669755}
   engaged: 0
+  rotateDir: left
   bones: []
 --- !u!1 &1319901894
 GameObject:
@@ -8232,6 +8240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 120
+  meshRenderer: {fileID: 0}
 --- !u!23 &1341256779
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9444,6 +9453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 120
+  meshRenderer: {fileID: 0}
 --- !u!23 &1568020610
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10853,7 +10863,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1734559598
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10869,9 +10879,9 @@ RectTransform:
   - {fileID: 19913227}
   m_Father: {fileID: 564972441}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -123.5}
   m_SizeDelta: {x: 200, y: 197.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1734559599
@@ -11323,6 +11333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberText: {fileID: 1408906384}
+  dropdown: {fileID: 0}
 --- !u!1 &1795237721
 GameObject:
   m_ObjectHideFlags: 1
@@ -11435,6 +11446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 120
+  meshRenderer: {fileID: 0}
 --- !u!23 &1829669756
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11789,7 +11801,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1859194726
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11805,9 +11817,9 @@ RectTransform:
   - {fileID: 25846793}
   m_Father: {fileID: 564972441}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -509}
   m_SizeDelta: {x: 200, y: 197.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1859194727
@@ -14663,6 +14675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 1
+  meshRenderer: {fileID: 0}
 --- !u!114 &6953544765274751059
 MonoBehaviour:
   m_ObjectHideFlags: 0

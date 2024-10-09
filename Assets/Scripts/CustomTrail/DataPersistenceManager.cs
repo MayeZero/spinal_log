@@ -103,6 +103,10 @@ public class DataPersistenceManager : MonoBehaviour
         return filename;
     }
 
+    public int getFileCount()
+    {
+        return fileCount;
+    }
 
 
 }
