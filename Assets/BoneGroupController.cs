@@ -12,7 +12,7 @@ public class BoneGroupController : MonoBehaviour
     public GameObject boneL5;
 
     [SerializeField]
-    private BluetoothDataRecieverPreset BTManager;
+    private BluetoothReceiverSuperClass BTManager;
     private bool firstConnect = true;
 
     private GameObject[] boneGroup;
@@ -29,7 +29,7 @@ public class BoneGroupController : MonoBehaviour
         if (BTManager != null)
         {
             // update depth of each sensor, have to store initial distance with no pressure
-            if (BTManager.Available && firstConnect)
+            if (BTManager.connected && firstConnect)
             {
                 //UnityDebug.Log("11111");
                 SetInitialBoneDepth(BTManager.converted_data);
@@ -41,11 +41,19 @@ public class BoneGroupController : MonoBehaviour
             }
             focusBone = FindFocusBoneDepth();
 
+            float highestAngle = 0;
+
             // count rotation degree
             foreach (GameObject bone in boneGroup)
             {
+                float degree = bone.GetComponent<BoneControllerScript>().SaggitoRotationDegree(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID);
+                highestAngle = Mathf.Max(highestAngle, Mathf.Abs(degree));
 
-                bone.GetComponent<BoneControllerScript>().Rotation(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID);
+            }
+
+            foreach (GameObject bone in boneGroup)
+            {
+                bone.GetComponent<BoneControllerScript>().Rotation(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID, highestAngle);
             }
 
         }
@@ -84,4 +92,27 @@ public class BoneGroupController : MonoBehaviour
 
         return target;
     }
+
+    //public void changeBoneLength(int newBoneLength)
+    //{
+    //    BoneControllerScript.boneLength = newBoneLength;
+    //}
+
+    //public void changeBoneGap(int newBoneGap)
+    //{
+    //    for (int i = 0; i < boneGroup.Length; i++)
+    //    {
+    //        boneGroup[i].GetComponent<BoneControllerScript>().changeBoneGap(newBoneGap);
+    //    }
+    //}
+
+    //public int getBoneLength()
+    //{
+    //    return boneGroup[0].GetComponent<BoneControllerScript>().boneLength; 
+    //}
+
+    //public int getBoneGap()
+    //{
+    //    return boneGroup[0].GetComponent<BoneControllerScript>().boneGap;
+    //}
 }

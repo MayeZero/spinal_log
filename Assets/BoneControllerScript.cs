@@ -13,12 +13,11 @@ public class BoneControllerScript : MonoBehaviour
     public float averageDepth;
     private float initialLeftDepth;
     private float initialRightDepth;
+    private float THRESHOLD = 0.015f;
+    [SerializeField] bool saggitalSide;
+    public static int boneLength = 15;
+    public static int boneGap = 200;
 
-    //public Material objectMaterial;
-    //public Material whiteMaterial;
-    //public Material redMaterial;
-    private float DEPTH_THRESHOLD = 27.0f; // Depth at which color change starts
-    private float MAX_DEPTH = 20.0f; // The maximum depth for full color change
 
     void Start()
     {
@@ -76,7 +75,7 @@ public class BoneControllerScript : MonoBehaviour
     { //transverse rotation
         float halfDistance = Math.Abs(leftDepth - rightDepth) / 2;
         float rotateAngle = 0;
-        int boneLength = 50;
+        //int boneLength = 50;
 
         if (initialLeftDepth - leftDepth <= 0.02)
         {
@@ -86,7 +85,7 @@ public class BoneControllerScript : MonoBehaviour
         {
             if (leftDepth == 0 || rightDepth == 0)
             {
-                rotateAngle = Mathf.Sin(leftDepth / boneLength);
+                rotateAngle = Mathf.Sin(leftDepth / boneLength); // larger length, smaller angle 
             }
             else
             {
@@ -111,39 +110,91 @@ public class BoneControllerScript : MonoBehaviour
     public float SaggitoRotationDegree(float focusBoneDepth, int focusBoneID)
     {
         float rotateAngle = 0;
-        float boneGap = 40; // change here
+        //float boneGap = 40; // change here
 
 
-        float difference = averageDepth - focusBoneDepth;
+        float difference = Math.Abs(averageDepth - focusBoneDepth);
         //rotateAngle = averageDepth - focusBoneDepth;
-        rotateAngle = Mathf.Tan(difference / boneGap);
-        if (boneID < focusBoneID)
+        rotateAngle = Mathf.Tan(difference / boneGap);     // larger boneGap, smaller angle. 
+        if (boneID != focusBoneID)
         {
             //UnityDebug.Log("boneID: " + boneID + "focusbone: " + focusBoneID + " rotateAngle: " + -rotateAngle);
-            return -rotateAngle;
+            rotateAngle = Math.Max(-THRESHOLD, -rotateAngle);
         }
         else
         {
             //UnityDebug.Log("boneID: " + boneID + "focusbone: " + focusBoneID + " rotateAngle: " + rotateAngle);
-            return rotateAngle;
+            rotateAngle = Math.Min(THRESHOLD, rotateAngle);
+        }
+        return rotateAngle;
+
+
+
+    }
+
+    public void enabledTranverse(int focusBoneID)
+    {
+        if (boneID != focusBoneID)
+        {
+            this.gameObject.SetActive(false);
+        } else
+        {
+            this.gameObject.SetActive(true);
+        }
+    }
+
+    public void Rotation(float focusBoneDepth, int focusBoneID, float highestAngle)
+    {
+
+        float xDegree = 0f;
+        float yDegree = 0f;
+
+        if (saggitalSide)
+        {
+            xDegree = SaggitoRotationDegree(focusBoneDepth, focusBoneID) + highestAngle; 
+        } else
+        {
+            enabledTranverse(focusBoneID);
+            yDegree = TransverseRotationDegree();
         }
 
 
-
-    }
-
-
-    [ContextMenu("testing tranvers")]
-
-    public void Rotation(float focusBoneDepth = 1f, int focusBoneID = 1)
-    {
-        //float xDegree = SaggitoRotationDegree(focusBoneDepth, focusBoneID);
-        float yDegree = TransverseRotationDegree();
-
         Vector3 newRotation = transform.localEulerAngles;
-        //newRotation.x = xDegree; // Assuming rotation in the sagittal plane is around the x-axis
+        newRotation.x = xDegree; // Assuming rotation in the sagittal plane is around the x-axis
         newRotation.y = yDegree;
 
-        transform.localRotation = Quaternion.Euler(0, yDegree * 500f, 0f);
+        transform.localRotation = Quaternion.Euler(xDegree * 400f, yDegree * 500f, 0f);
     }
+
+    public float TestxDegree;
+    public float TestyDegree;
+    [ContextMenu("Test Rotation")]
+    public void TestRotation()
+    {
+        if (!saggitalSide)
+        {
+            TestxDegree = 0f;
+        }
+        else
+        {
+            TestyDegree = 0f;
+        }
+
+
+        Vector3 newRotation = transform.localEulerAngles;
+        newRotation.x = TestxDegree; // Assuming rotation in the sagittal plane is around the x-axis
+        newRotation.y = TestyDegree;
+
+        transform.localRotation = Quaternion.Euler(TestxDegree * 400f, TestyDegree * 500f, 0f);
+    }
+
+    //public static void changeBoneLength(int newBoneLength)
+    //{
+    //    boneLength = newBoneLength;
+    //}
+
+    //public static void changeBoneGap(int newBoneGap)
+    //{
+    //    boneGap = newBoneGap;
+    //}
 }
