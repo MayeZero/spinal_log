@@ -21,6 +21,7 @@ public class BluetoothManager : MonoBehaviour
 
     // stiffness status send back to SpinalLog Device, 0 = default, 1 = hard
     private bool isStiff;
+    private bool stiffOn = false;
 
     //private IEnumerator stiffnessCoroutine;
 
@@ -49,6 +50,7 @@ public class BluetoothManager : MonoBehaviour
         InitBluetooth();
         isConnected = false;
         IsStiff = false;
+        stiffOn = false;
 
         // if (stiffnessCoroutine != null)
         // {
@@ -233,13 +235,24 @@ public class BluetoothManager : MonoBehaviour
 
         foreach (var d in data)
         {
-
-            if (d.Contains("SpinalLog"))
+            if (!stiffOn)
             {
-                string[] parts = d.Split('+');
-                string macAddress = parts[0];
-                BluetoothConnector.CallStatic("StartConnection", macAddress);
-                break; // Break out of the loop since we found the device to connect to
+                if (d.Contains("SpinalLog"))
+                {
+                    string[] parts = d.Split('+');
+                    string macAddress = parts[0];
+                    BluetoothConnector.CallStatic("StartConnection", macAddress);
+                    break; // Break out of the loop since we found the device to connect to
+                }
+            } else
+            {
+                if (d.Contains("Air Case")) // stiff device 
+                {
+                    string[] parts = d.Split('+');
+                    string macAddress = parts[0];
+                    BluetoothConnector.CallStatic("StartConnection", macAddress);
+                    break; // Break out of the loop since we found the device to connect to
+                }
             }
         }
     }
@@ -255,5 +268,17 @@ public class BluetoothManager : MonoBehaviour
         inputdata = string.Join(",", numbers.Select(n => n.ToString("F2")));
     }
 
+    public void SendData(string dataSend)
+    {
+        if (isConnected)
+            //should be sending stiffness 
+            BluetoothConnector.CallStatic("WriteData", dataSend);
+    }
 
+    public void setStiff(bool mode)
+    {
+        stiffOn = mode; // change the stiff value
+
+        Debug.Log("Stiff checked: "+ stiffOn);
+    }
 }
