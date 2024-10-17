@@ -45,18 +45,18 @@ public class csvReader : MonoBehaviour
 
                 string[] csvLines = csvFile.text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-records = new List<float>();
+                records = new List<float>();
 
-// Skip the header line
-for (int i = 1; i < csvLines.Length; i++)
-{
-    string line = csvLines[i].Trim();
-    if (!string.IsNullOrEmpty(line))
-    {
-        float value = float.Parse(line);
-        records.Add(value);
-    }
-}
+                // Skip the header line
+                for (int i = 1; i < csvLines.Length; i++)
+                {
+                    string line = csvLines[i].Trim();
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        float value = float.Parse(line);
+                        records.Add(value);
+                    }
+                }
             }
             catch (IOException ex)
             {
@@ -108,5 +108,44 @@ for (int i = 1; i < csvLines.Length; i++)
         return records;
     }
 
+    public static List<float> readCSVPath(string datadir, string filename)
+    {
+        List<float> records = new List<float>();
+
+        string fullPath = Path.Combine(datadir, filename);
+
+        if (File.Exists(fullPath))
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines(fullPath);
+                Debug.Log(lines);
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (float.TryParse(lines[i], out float value))
+                    {
+                        records.Add(value);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Skipping invalid data at line {i}: {lines[i]}");
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error occured when trying to load data from file: " + fullPath + "\n" + e);
+            }
+        }
+
+        return records;
+    }
+
+
+    
+
+    
 
 }

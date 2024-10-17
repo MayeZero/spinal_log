@@ -6,23 +6,22 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
-public class BluetoothDataReceiver : MonoBehaviour
+public class BluetoothDataReceiver : BluetoothReceiverSuperClass
 {
     [SerializeField] ShowCustomGraphYT graphYT;
     [SerializeField] UISwitcher.UISwitcher toggle;
-    private BluetoothManager bluetoothManager;
+    //private BluetoothManager bluetoothManager;
     SagittalControllerScript sagittalController;
     TranverseControllerScript tranverseController;
-    private bool firstConnection = true;
     
     [SerializeField] Text output;
     [SerializeField] Text log;
     [SerializeField] Text change;
 
     public string sensorDatainString;
-    public bool Available = false;
+    //public bool connected = false;
 
-    public float[] converted_data = new float[8];
+    //public float[] converted_data = new float[8];
     public float[] sensors_loads1 = new float[8];
     public float[] sensors_loads2 = new float[8];
     public float[] sensors_displacements = new float[8];
@@ -36,7 +35,16 @@ public class BluetoothDataReceiver : MonoBehaviour
     public float focusSectionForce;
     public int denominator = 1;
     private MonoBoneScript[] bones = new MonoBoneScript[4];
-    
+    //[SerializeField] float delayTime = 0.08f;
+
+    // This field controls the low pass value
+    // Use 1 for no filtering, and a value closer to zero for more sluggish filtering 
+    // (Note that zero would be invalid and freeze the transform)
+    //
+    //[Range(0.1f, 1.0f)]
+    ////public float lowPassFilter = 0.5f;
+    //public float LowPassFilter { set { lowPassFilter = value; } }
+    //public float currentData, targetData;
 
     private IEnumerator myCoroutine;
 
@@ -50,12 +58,12 @@ public class BluetoothDataReceiver : MonoBehaviour
 
         bluetoothManager = FindObjectOfType<BluetoothManager>();
         Debug.Log("found bluetooth manager: " + bluetoothManager);
-        Available = true;
+        connected = true;
         
         toggle.isOn = bluetoothManager.IsStiff;
         numSections = 4;
         numSensors = 8;
-        focusSectionForce = 0.0f;
+        focusSectionForce = currentData = targetData = 0.0f;
         output.text = bluetoothManager.inputdata;
 
         for (int i = 0; i < sensors_loads1.Length; i++)
@@ -77,7 +85,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         {
             StopCoroutine(myCoroutine);
         }
-        myCoroutine = DataProcessing(0.08f);
+        myCoroutine = DataProcessing(delayTime);
         StartCoroutine(myCoroutine);
 
     }
@@ -100,11 +108,25 @@ public class BluetoothDataReceiver : MonoBehaviour
         //sagittalBonesMovement(30, 0.5f); // option 1: move with mapping value to each bone section
 
         this.focusSectionForce = computeSectionForce(focusSectionIndex); // compute force for graph visualisation 
-        // sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
-        sagittalBoneMovementV2(focusSectionIndex, focusSectionForce, 17f); // still option 2, but with curation
-        tranverseBonesMovementVisualiser(focusSectionIndex);
+        // sagittalBoneMovementV2(focusSectionIndex, focusSectionForce, 17f); // still option 2, but with curation
+        // tranverseBonesMovementVisualiser(focusSectionIndex);
         
-        graphYT.addRealTimeDataToGraph(focusSectionForce) ;
+
+        // ===== Low-pass filter here ====== // 
+        if (focusSectionForce != currentData)
+        {
+            targetData = focusSectionForce;
+        }
+
+        if (lowPassFilter < 1)
+        {
+            focusSectionForce = Mathf.Lerp(currentData, targetData, lowPassFilter);
+        }
+
+        currentData = focusSectionForce;
+        // ================================ //
+
+        graphYT.addRealTimeDataToGraph(focusSectionForce);
         string data = focusSectionForce.ToString();//testing 
         
         output.text = "Focused Section: " + focusSectionIndex;
@@ -120,8 +142,12 @@ public class BluetoothDataReceiver : MonoBehaviour
 
     private void Update()
     {
-        
-        
+        if (bluetoothManager != null && connected)
+        {
+            sensorDatainString = bluetoothManager.inputdata;
+            converted_data = ConvertedFloat(sensorDatainString);
+        }
+
     }
 
     private float[] ConvertedFloat(string inputData)
@@ -335,6 +361,11 @@ public class BluetoothDataReceiver : MonoBehaviour
         //    sagittalController.moveCurveBone(0.2f, focusSectionIndex);
         //}
     }
+
+    //public override void setDelayTime(float delayTime)
+    //{
+    //    this.delayTime = delayTime;
+    //}
 
 
 

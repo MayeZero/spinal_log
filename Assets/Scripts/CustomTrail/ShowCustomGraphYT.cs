@@ -12,6 +12,7 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
     
     private List<float> forceTrail;
     private List<float> realTimeForceInput;
+    private float previous_filtered_value = 0f;
     
 
     // Start is called before the first frame update
@@ -153,5 +154,12 @@ public class ShowCustomGraphYT : MonoBehaviour, IDataPersistence
     {
         // save real time force trail to data.forceTrail
         data.forceTrail = this.realTimeForceInput;
+    }
+
+
+    public float smoothData(float newData, float alpha, float previous_filtered_value)
+    {
+        float filtered_value = alpha * newData + (1 - alpha) * previous_filtered_value;
+        return filtered_value;
     }
 }

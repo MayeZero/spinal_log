@@ -8,7 +8,7 @@ using XCharts.Runtime;
 
 public class DropDownScript : MonoBehaviour
 {
-    [SerializeField] private TMP_Text numberText;
+    [SerializeField] private TMP_Text DataSourceText;
     [SerializeField] private TMP_Dropdown dropdown;
     int countIndex = 0;
 
@@ -19,12 +19,10 @@ public class DropDownScript : MonoBehaviour
     {
         dropdown.options.Clear();
         dropdown.options.Add(new TMP_Dropdown.OptionData("Load"));
-        addNewOption(1);
+        addNewOption(1);  // default file G1
         countIndex = 1;
-    }
 
-    private void Awake()
-    {
+        // add additional available files
         int fileCount = DataPersistenceManager.instance.getFileCount();
         Debug.Log("Total recorded files: " + fileCount);
         for (int i = 2; i < fileCount + 1; i++)
@@ -33,6 +31,10 @@ public class DropDownScript : MonoBehaviour
         }
 
         countIndex = fileCount;
+    }
+
+    private void Awake()
+    {
     }
 
 
@@ -45,12 +47,13 @@ public class DropDownScript : MonoBehaviour
             countIndex += 1;
             index = countIndex;
             addNewOption(index);
+            DataPersistenceManager.instance.fileCount += 1;
             dropdown.value = index;
         }
 
         string filename = getFileName(index);
         DataPersistenceManager.instance.setFileName(filename);
-        numberText.text = DataPersistenceManager.instance.getFileName();
+        DataSourceText.text = DataPersistenceManager.instance.getFileName();
     }
 
     private string getFileName(int index)
