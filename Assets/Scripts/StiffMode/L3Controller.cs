@@ -18,20 +18,11 @@ public class L3Controller : MonoBehaviour
     public float saggitalAngle;
     [SerializeField] bool saggital;
     private bool firstConnect = true;
+    public static float boneMoveValue = 1f;
 
 
     [SerializeField]
     private L3BlueToothDataReceiver BTManager;
-
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    L3.transform.localPosition = new Vector3(0f, 0f, 0f);
-    //}
-
-    //void Awake() {
-    //    L3.transform.localPosition = new Vector3(0f, 0f, 0f);
-    //}
 
     // Update is called once per frame
     void Update()
@@ -83,7 +74,7 @@ public class L3Controller : MonoBehaviour
             Vector3 originalPosition = L3.transform.localPosition;
 
         
-            L3.transform.localPosition = new Vector3(originalPosition.x, originalPosition.y, moveDist * 0.005f);
+            L3.transform.localPosition = new Vector3(originalPosition.x, originalPosition.y, moveDist * boneMoveValue);
         }       
     }
 

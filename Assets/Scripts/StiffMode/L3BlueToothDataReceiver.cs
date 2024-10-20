@@ -9,7 +9,7 @@ public class L3BlueToothDataReceiver : BluetoothReceiverSuperClass
 {
     [SerializeField] L3Graph graph;
     [SerializeField] Text output;
-    [SerializeField] Text log;
+    //[SerializeField] Text log;
     public string sensorDatainString;
 
     //public float[] converted_data = new float[3];
@@ -20,6 +20,7 @@ public class L3BlueToothDataReceiver : BluetoothReceiverSuperClass
     private IEnumerator myCoroutine2;
     public float focusSectionForce;
     private float initialAvgForce;
+    public float scaleLevel = 1;
 
     void Start()
     {
@@ -45,7 +46,7 @@ public class L3BlueToothDataReceiver : BluetoothReceiverSuperClass
             sensorDatainString = bluetoothManager.inputdata;
             converted_data = ConvertedFloat(sensorDatainString);
 
-            focusSectionForce = converted_data[0];
+            focusSectionForce = converted_data[0] * scaleLevel;
 
             // ===== Low-pass filter here ====== // 
             if (focusSectionForce != currentData)
@@ -61,6 +62,9 @@ public class L3BlueToothDataReceiver : BluetoothReceiverSuperClass
             // ================================ //
 
             graph.addRealTimeDataToGraph(focusSectionForce);
+
+            output.text = "Force: " + focusSectionForce;
+
             yield return new WaitForSeconds(waitTime);
         }
 
