@@ -20,28 +20,19 @@ public class SliderChange : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        updateSlideInfo();
     }
 
     // Update is called once per frame
     void Update()
     {
-        boneLengthSlider.value = BoneControllerScript.boneLength;
-        boneGapSlider.value = BoneControllerScript.boneGap;
-        delaySlider.value = bluetoothDataReceiver.delayTime;
-        lowPassfilterSlider.value = bluetoothDataReceiver.lowPassFilter;
-
-
-        boneLengthSliderText.text = "BoneLength:" + boneLengthSlider.value.ToString();
-        boneGapSliderText.text = "BoneGap:" + boneGapSlider.value.ToString();
-        delaytTimeSliderText.text = "DelayTime:" + delaySlider.value.ToString("0.00");
-        lowPassFilterText.text = "Filter:" + lowPassfilterSlider.value.ToString("0.0");
     }
 
     public void changeBoneLength()
     {
         int length = (int) boneLengthSlider.value;
         BoneControllerScript.boneLength = length;
+        updateSlideInfo();
         //TranverseBoneControllerScript.changeBoneLength(length);
         //SagittalBoneControllerScript.changeBoneLength(length);
 
@@ -51,6 +42,7 @@ public class SliderChange : MonoBehaviour
     {
         int gap = (int)boneGapSlider.value;
         BoneControllerScript.boneGap = gap;
+        updateSlideInfo();
         //TranverseBoneControllerScript.changeBoneGap(gap);
         //SagittalBoneControllerScript.changeBoneGap(gap);
     }
@@ -62,6 +54,7 @@ public class SliderChange : MonoBehaviour
         {
             bluetoothDataReceiver.delayTime = delayTime;
         }
+        updateSlideInfo();
     }
 
     public void changeFilterValue()
@@ -71,5 +64,21 @@ public class SliderChange : MonoBehaviour
         {
             bluetoothDataReceiver.lowPassFilter = filterValue;
         }
+        updateSlideInfo();
+    }
+
+
+    public void updateSlideInfo()
+    {
+        boneLengthSlider.value = BoneControllerScript.boneLength;
+        boneGapSlider.value = BoneControllerScript.boneGap;
+        delaySlider.value = bluetoothDataReceiver.delayTime;
+        lowPassfilterSlider.value = bluetoothDataReceiver.lowPassFilter;
+
+
+        boneLengthSliderText.text = "Tranverse Insensitivity: " + boneLengthSlider.value.ToString();
+        boneGapSliderText.text = "Sagittal Insensitivity: " + boneGapSlider.value.ToString();
+        delaytTimeSliderText.text = "DataReceived DelayTime: " + delaySlider.value.ToString("0.00");
+        lowPassFilterText.text = "LowPass Filter Value:" + lowPassfilterSlider.value.ToString("0.0");
     }
 }

@@ -82,8 +82,16 @@ public class HistoriesDropdownScript : MonoBehaviour
         
         string filename = fileDropDown.options[index].text;
         DataSourceText.text = filename;
-        historyGraph.setData(folderName, filename);
-        //historyGraph.addCustomTrailToGraph();
+
+        if (folderDropdown.value == 0)
+        {
+            historyGraph.setPattern(filename);
+        }
+        else
+        {
+            historyGraph.setData(folderName, filename);
+            //historyGraph.addCustomTrailToGraph();
+        }
 
     }
 

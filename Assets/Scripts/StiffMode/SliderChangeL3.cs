@@ -36,10 +36,10 @@ public class SliderChangeL3 : MonoBehaviour
         scaleLevelSlider.value = bluetoothDataReceiver.scaleLevel;
         boneSlider.value = L3Controller.boneMoveValue;
 
-        scaleLevelSliderText.text = "Force Graph Scale: " + scaleLevelSlider.value.ToString("0.0");
-        delaytTimeSliderText.text = "Delay Time: " + delaySlider.value.ToString("0.00");
-        lowPassFilterText.text = "Filter: " + lowPassfilterSlider.value.ToString("0.0");
-        boneSliderText.text = "Bone Move Scale: " + boneSlider.value.ToString("0.0");
+        scaleLevelSliderText.text = "Force Graph Scale Value: " + scaleLevelSlider.value.ToString("0.0");
+        delaytTimeSliderText.text = "Data Received Delay Time: " + delaySlider.value.ToString("0.00");
+        lowPassFilterText.text = "Low Pass Filter: " + lowPassfilterSlider.value.ToString("0.0");
+        boneSliderText.text = "Bone Move Scale Value: " + boneSlider.value.ToString("0.0");
     }
 
 

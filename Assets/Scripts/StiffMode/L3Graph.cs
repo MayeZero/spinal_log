@@ -11,7 +11,7 @@ public class L3Graph : MonoBehaviour
 
     private List<float> forceTrail;
     private List<float> realTimeForceInputPreset;
-    private string filename = "expertTrial.csv";
+    private string filename = "expertTrial_short.csv";
 
 
     // Start is called before the first frame update
@@ -107,7 +107,7 @@ public class L3Graph : MonoBehaviour
     {
         this.filename = filename;
         this.forceTrail = csvReader.srdCSVFile(filename);
-        realTimeForceInputPreset = new List<float>();
+        cleanRealTimeData();
         InitChartWithTrail();
     }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class L3BlueToothDataReceiver : BluetoothReceiverSuperClass
 {
-    [SerializeField] L3Graph graph;
+    [SerializeField] ShowingGraphPreset graph;
     [SerializeField] Text output;
     //[SerializeField] Text log;
     public string sensorDatainString;

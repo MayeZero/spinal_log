@@ -121,6 +121,13 @@ public class HistoryGraph : MonoBehaviour
         //addCustomTrailToGraph();
     }
 
+
+    public void setPattern(string filename)
+    {
+        this.forceTrail = csvReader.srdCSVFile(filename);
+        InitChartWithTrail() ;
+    }
+
     //public void resetToFile(string filename)
     //{
     //    this.filename = filename;

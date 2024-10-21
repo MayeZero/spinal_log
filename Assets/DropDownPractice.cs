@@ -7,7 +7,7 @@ public class DropDownPractice : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown dropdown;
     [SerializeField] ShowingGraphPreset graph;
-    private List<string> graphNames = new List<string>() { "expertTrial.csv", "expertTrial-600.csv", "expertTrial_short.csv", "empty_csv.csv" };
+    private List<string> graphNames = new List<string>() { "expertTrial_short.csv", "expertTrial.csv", "expertTrial-600.csv", "empty_csv.csv" };
 
     // Start is called before the first frame update
 
@@ -15,6 +15,7 @@ public class DropDownPractice : MonoBehaviour
     {
         dropdown.options.Clear();
         dropdown.AddOptions(graphNames);
+        DropdownSample();
 
     }
 

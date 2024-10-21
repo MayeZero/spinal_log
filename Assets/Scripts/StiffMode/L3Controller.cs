@@ -32,9 +32,11 @@ public class L3Controller : MonoBehaviour
             // update depth of each sensor, have to store initial distance with no pressure
             if (BTManager.connected && firstConnect)
             {
-                SetData(BTManager.converted_data);
+                // SetData(BTManager.converted_data);
                 firstConnect = false;
             }
+
+            SetData(BTManager.converted_data);
 
             //Rotation();
 
@@ -58,7 +60,6 @@ public class L3Controller : MonoBehaviour
         this.changeDepth = input[0];
         this.transverseAngle = input[1];
         this.saggitalAngle = input[2];
-        //Debug.Log(transverseAngle);
     }
 
     [ContextMenu("Test updown")]

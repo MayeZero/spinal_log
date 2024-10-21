@@ -11,7 +11,7 @@ public class ShowingGraphPreset : MonoBehaviour
     
     private List<float> forceTrail;
     private List<float> realTimeForceInputPreset;
-    private string filename = "expertTrial.csv";
+    private string filename = "expertTrial_short.csv";
 
 
     // Start is called before the first frame update

@@ -30,7 +30,7 @@ public class csvReader : MonoBehaviour
         
         if (filename == null)
         {
-            filename = "expertTrial.csv";
+            filename = "expertTrial_short.csv";
         }
         
 
