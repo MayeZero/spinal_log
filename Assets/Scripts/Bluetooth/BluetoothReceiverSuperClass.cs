@@ -9,6 +9,7 @@ public abstract class BluetoothReceiverSuperClass : MonoBehaviour
     public bool connected = false;
     public float[] converted_data = new float[8];
     public float delayTime = 0.08f;
+    public float graphScale = 0.75f;
 
     // This field controls the low pass value
     // Use 1 for no filtering, and a value closer to zero for more sluggish filtering 

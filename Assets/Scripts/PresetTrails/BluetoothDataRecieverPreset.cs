@@ -29,7 +29,6 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
     public float[] sectional_loads = new float[4];
     private int focusSectionIndex;
     public string input;
-
     private IEnumerator myCoroutine2;
     public float focusSectionForce;
     private float initialAvgForce;
@@ -99,7 +98,7 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
         currentData = focusSectionForce;
         // ================================ //
 
-        graph.addRealTimeDataToGraph(focusSectionForce);
+        graph.addRealTimeDataToGraph(focusSectionForce * graphScale);
         Debug.Log("Force preset: " + focusSectionForce);
         output.text = "Focused Section: " + focusSectionIndex;
         log.text = "Force: " + focusSectionForce;

@@ -423,8 +423,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e04008264a558642a131d39da0af049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 120
-  meshRenderer: {fileID: 13756415}
 --- !u!23 &13756415
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3025,6 +3023,7 @@ MonoBehaviour:
   - 0
   - 0
   delayTime: 0.08
+  graphScale: 0.75
   lowPassFilter: 0.5
   currentData: 0
   targetData: 0
@@ -3096,6 +3095,7 @@ MonoBehaviour:
   - 0
   - 0
   delayTime: 0.08
+  graphScale: 0.75
   lowPassFilter: 0.5
   currentData: 0
   targetData: 0
@@ -4812,10 +4812,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1963806008}
   m_HandleRect: {fileID: 984899469}
   m_Direction: 0
-  m_MinValue: 1
-  m_MaxValue: 10
+  m_MinValue: 0
+  m_MaxValue: 5
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -5697,8 +5697,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e04008264a558642a131d39da0af049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 120
-  meshRenderer: {fileID: 709536151}
 --- !u!23 &709536151
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6237,8 +6235,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e04008264a558642a131d39da0af049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 120
-  meshRenderer: {fileID: 796627780}
 --- !u!23 &796627780
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10026,8 +10022,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e04008264a558642a131d39da0af049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 120
-  meshRenderer: {fileID: 1131727077}
 --- !u!23 &1131727077
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10855,7 +10849,7 @@ MonoBehaviour:
   m_MinValue: 1
   m_MaxValue: 10
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -11135,8 +11129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e04008264a558642a131d39da0af049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 120
-  meshRenderer: {fileID: 1284841605}
 --- !u!23 &1284841605
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11478,20 +11470,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33f8325ed79b24d4aa00469ac2e693bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 0.05
-  L1Bone: {fileID: 1131727076}
-  L2Bone: {fileID: 1284841604}
-  L3Bone: {fileID: 796627779}
-  L4Bone: {fileID: 709536150}
-  L5Bone: {fileID: 13756414}
-  engaged: 0
-  rotateDir: right
-  bones:
-  - {fileID: 1131727076}
-  - {fileID: 1284841604}
-  - {fileID: 796627779}
-  - {fileID: 709536150}
-  - {fileID: 13756414}
 --- !u!114 &1326813976
 MonoBehaviour:
   m_ObjectHideFlags: 0

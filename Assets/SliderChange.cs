@@ -10,10 +10,14 @@ public class SliderChange : MonoBehaviour
     public Slider boneGapSlider;
     public Slider boneLengthSlider;
     public Slider lowPassfilterSlider;
+    public Slider graphScaler;
+
     public TMP_Text boneLengthSliderText;
     public TMP_Text boneGapSliderText;
     public TMP_Text delaytTimeSliderText;
     public TMP_Text lowPassFilterText;
+    public TMP_Text graphScalerText;
+
     public BoneGroupController SagittalBoneControllerScript;
     public BoneGroupController TranverseBoneControllerScript;
     public BluetoothReceiverSuperClass bluetoothDataReceiver;
@@ -67,6 +71,16 @@ public class SliderChange : MonoBehaviour
         updateSlideInfo();
     }
 
+    public void changeGraphScaler()
+    {
+        float graphScale = graphScaler.value;
+        if (bluetoothDataReceiver != null && bluetoothDataReceiver.connected)
+        {
+            bluetoothDataReceiver.graphScale = graphScale;
+        }
+        updateSlideInfo();
+    }
+
 
     public void updateSlideInfo()
     {
@@ -74,11 +88,13 @@ public class SliderChange : MonoBehaviour
         boneGapSlider.value = BoneControllerScript.boneGap;
         delaySlider.value = bluetoothDataReceiver.delayTime;
         lowPassfilterSlider.value = bluetoothDataReceiver.lowPassFilter;
+        graphScaler.value = bluetoothDataReceiver.graphScale;
 
 
         boneLengthSliderText.text = "Tranverse Insensitivity: " + boneLengthSlider.value.ToString();
         boneGapSliderText.text = "Sagittal Insensitivity: " + boneGapSlider.value.ToString();
         delaytTimeSliderText.text = "DataReceived DelayTime: " + delaySlider.value.ToString("0.00");
         lowPassFilterText.text = "LowPass Filter Value:" + lowPassfilterSlider.value.ToString("0.0");
+        graphScalerText.text = "Graph Scaler Value: " + graphScaler.value.ToString("0.0");
     }
 }

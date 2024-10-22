@@ -11,8 +11,6 @@ public class BluetoothDataReceiver : BluetoothReceiverSuperClass
     [SerializeField] ShowCustomGraphYT graphYT;
     [SerializeField] UISwitcher.UISwitcher toggle;
     //private BluetoothManager bluetoothManager;
-    SagittalControllerScript sagittalController;
-    TranverseControllerScript tranverseController;
     
     [SerializeField] Text output;
     [SerializeField] Text log;
@@ -50,11 +48,6 @@ public class BluetoothDataReceiver : BluetoothReceiverSuperClass
 
     void Start()
     {
-        sagittalController = FindObjectOfType<SagittalControllerScript>();
-        Debug.Log("Found sagittal: " + sagittalController);
-        tranverseController = FindObjectOfType<TranverseControllerScript>();
-        Debug.Log("Found sagittal: " + tranverseController);
-
 
         bluetoothManager = FindObjectOfType<BluetoothManager>();
         Debug.Log("found bluetooth manager: " + bluetoothManager);
@@ -261,121 +254,7 @@ public class BluetoothDataReceiver : BluetoothReceiverSuperClass
 
     }
 
-    /// <summary>
-    /// Sagittal bone movement visualizer with denominator (for limit force range) and threshold (maximum movement)
-    /// </summary>
-    /// <param name="denominator"> denominator to reduce range of force </param>
-    /// <param name="threshold"> maximum movement value </param>
-    private void sagittalBonesMovement(float denominator, float threshold)
-    {
-        sagittalController.resetPosition(); // reset position 
-        for (int i = 0; i < sectional_change.Length; i++)
-        {
-            float value = computeSectionForce(i)/denominator;
-            if (Math.Abs(value) > threshold)
-            {
-                value = threshold;
-            }
-            value = (float)Math.Round(value, 1);
-            sagittalController.bones[i+1].moveDown(value);
-        }
-    }
 
-
-    /// <summary>
-    /// Perform tranverse bone movement visualisation given section index and force
-    /// </summary>
-    /// <param name="focusSectionIndex"></param>
-    private void tranverseBonesMovementVisualiser(int focusSectionIndex)
-    {
-        float MAX_ANGLE = 0.1f;
-        //float leftDepth = this.sensors_displacements[focusSectionIndex * 2 + 0];
-        //float rightDepth = this.sensors_displacements[focusSectionIndex * 2 + 1];        
-        //float halfDistance = Math.Abs(leftDepth - rightDepth)/2;
-        //float rotateAngle = 0;
-        //int boneLength = 50;
-
-
-
-        //if (halfDistance > 0.02)
-        //{
-        //    if (leftDepth == 0 || rightDepth == 0)
-        //    {
-        //        rotateAngle = Mathf.Sin(leftDepth / boneLength);
-        //    }
-        //    else
-        //    {
-        //        rotateAngle = Mathf.Sin(halfDistance / boneLength);
-        //    }
-
-        //    if (leftDepth < rightDepth)
-        //    {
-        //        //bone.transform.localRotation = Quaternion.Euler(0f, -rotateAngle *500f, 0f);
-        //        //UnityDebug.Log("----origin: " + originalDegree + ", rotateAngle: " + -rotateAngle);
-        //        rotateAngle = -rotateAngle;
-        //    }
-
-        //    tranverseController.rotate(focusSectionIndex, rotateAngle);
-        //}
-
-
-
-
-        float leftForce = computeSensorForce(focusSectionIndex * 2 + 0);
-        float rightForce = computeSensorForce(focusSectionIndex * 2 + 1);
-        // If there is not much different on force applying on both side, ignore 
-        if (Math.Abs(leftForce - rightForce) <= 1)
-        {
-            return;
-        }
-
-
-        float force = Math.Min(17, Math.Max(leftForce, rightForce)); // upper constrant 
-        if (force >= 5)
-        {
-            float angle = MAX_ANGLE * force / 17f;
-            if (leftForce > rightForce)
-            {
-                angle = -angle;
-            }
-
-            tranverseController.rotate(focusSectionIndex, angle);
-        }
-    }
-
-
-    private void sagittalBoneMovementV2(int focusSectionIndex, float force, float threshold)
-    {
-        sagittalController.resetPosition();
-        force = force / threshold * 0.5f;
-        if (force < 0.1)
-        {
-            return;
-        }
-        sagittalController.moveCurveBone(force, focusSectionIndex);
-        //if (Math.Abs(force) >= threshold)
-        //{
-        //    sagittalController.moveCurveBone(0.5f, focusSectionIndex); // option 2: move with only caring about engaged section
-        //} else if (Math.Abs(force) >= 0.3)
-        //{
-        //    sagittalController.moveCurveBone(0.2f, focusSectionIndex);
-        //}
-    }
-
-    //public override void setDelayTime(float delayTime)
-    //{
-    //    this.delayTime = delayTime;
-    //}
-
-
-
-
-
-
-
-
-    // adjust the 0.5 of thingy for option 2, also thinkabout the skipped section
-    // option 1: set the boundaries 
 
 
 }

@@ -20,8 +20,12 @@ public class L3BlueToothDataReceiver : BluetoothReceiverSuperClass
     private IEnumerator myCoroutine2;
     public float focusSectionForce;
     private float initialAvgForce;
-    public float scaleLevel = 1;
+    public float scaleLevel = 2.0f;
 
+    private void Awake()
+    {
+        scaleLevel = 2.0f;
+    }
     void Start()
     {
         // Initialize variables and start data processing coroutine

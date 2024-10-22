@@ -18,7 +18,8 @@ public class L3Controller : MonoBehaviour
     public float saggitalAngle;
     [SerializeField] bool saggital;
     private bool firstConnect = true;
-    public static float boneMoveValue = 1f;
+    public static float boneMoveValue = 0.2f;
+    private float ROTATE_SCALE = 5f;
 
 
     [SerializeField]
@@ -82,7 +83,7 @@ public class L3Controller : MonoBehaviour
     [ContextMenu("Test rotate")]
     void Rotation() { //transverse rotation
 
-        L3.transform.localRotation = Quaternion.Euler(saggitalAngle, transverseAngle, 0f);
+        L3.transform.localRotation = Quaternion.Euler(0f, transverseAngle * ROTATE_SCALE, 0f);
  
         //UnityDebug.Log("rotate++++++++++++++++++++++++++++");
         
