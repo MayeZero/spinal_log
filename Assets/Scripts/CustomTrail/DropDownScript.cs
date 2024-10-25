@@ -10,7 +10,9 @@ public class DropDownScript : MonoBehaviour
 {
     [SerializeField] private TMP_Text DataSourceText;
     [SerializeField] private TMP_Dropdown dropdown;
+    [SerializeField] private TMP_Text SelectText;
     int countIndex = 0;
+    //bool selected = false;
 
 
     // Start is called before the first frame update
@@ -18,7 +20,7 @@ public class DropDownScript : MonoBehaviour
     private void Start()
     {
         dropdown.options.Clear();
-        dropdown.options.Add(new TMP_Dropdown.OptionData("Load"));
+        dropdown.options.Add(new TMP_Dropdown.OptionData("New"));
         addNewOption(1);  // default file G1
         countIndex = 1;
 
@@ -40,6 +42,7 @@ public class DropDownScript : MonoBehaviour
 
     public void DropdownSample()
     {
+        SelectText.gameObject.SetActive(false);
         int index = dropdown.value;
 
         if (index == 0)
