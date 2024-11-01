@@ -1,42 +1,62 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
-public class BluetoothDataReceiver : MonoBehaviour
+public class BluetoothDataReceiver : BluetoothReceiverSuperClass
 {
     [SerializeField] ShowCustomGraphYT graphYT;
     [SerializeField] UISwitcher.UISwitcher toggle;
-    private BluetoothManager bluetoothManager;
+    //private BluetoothManager bluetoothManager;
     
     [SerializeField] Text output;
     [SerializeField] Text log;
+    [SerializeField] Text change;
 
     public string sensorDatainString;
+    //public bool connected = false;
 
-    public float[] converted_data = new float[8];
+    //public float[] converted_data = new float[8];
     public float[] sensors_loads1 = new float[8];
     public float[] sensors_loads2 = new float[8];
     public float[] sensors_displacements = new float[8];
     public int numSensors;
     public int numSections;
     public float[] sectional_displacements = new float[4];
+    public float[] sectional_change = new float[4];
     public float[] sectional_loads = new float[4];
-    private int focusSectionIndex;
+    private int focusSectionIndex = 0;
     public string input;
     public float focusSectionForce;
+    public int denominator = 1;
+    private MonoBoneScript[] bones = new MonoBoneScript[4];
+    //[SerializeField] float delayTime = 0.08f;
+
+    // This field controls the low pass value
+    // Use 1 for no filtering, and a value closer to zero for more sluggish filtering 
+    // (Note that zero would be invalid and freeze the transform)
+    //
+    //[Range(0.1f, 1.0f)]
+    ////public float lowPassFilter = 0.5f;
+    //public float LowPassFilter { set { lowPassFilter = value; } }
+    //public float currentData, targetData;
 
     private IEnumerator myCoroutine;
 
     void Start()
     {
+
         bluetoothManager = FindObjectOfType<BluetoothManager>();
+        Debug.Log("found bluetooth manager: " + bluetoothManager);
+        connected = true;
+        
         toggle.isOn = bluetoothManager.IsStiff;
         numSections = 4;
         numSensors = 8;
-        focusSectionForce = 0.0f;
+        focusSectionForce = currentData = targetData = 0.0f;
         output.text = bluetoothManager.inputdata;
 
         for (int i = 0; i < sensors_loads1.Length; i++)
@@ -49,6 +69,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         {
             sectional_loads[i] = 0.0f;
             sectional_displacements[i] = 0.0f;
+            sectional_change[i] = 0.0f;
         }
 
         focusSectionIndex = 0;
@@ -57,7 +78,7 @@ public class BluetoothDataReceiver : MonoBehaviour
         {
             StopCoroutine(myCoroutine);
         }
-        myCoroutine = DataProcessing(0.01f);
+        myCoroutine = DataProcessing(delayTime);
         StartCoroutine(myCoroutine);
 
     }
@@ -70,18 +91,40 @@ public class BluetoothDataReceiver : MonoBehaviour
 
         sensorDatainString = bluetoothManager.inputdata;
         
-        converted_data = ConvertedFloat(sensorDatainString);
+        converted_data = ConvertedFloat(sensorDatainString);  // convert string signal to float 
+        computeDisplacementWithDistance(); // fill sensors_displacement 
+        findSectionEngaged();  // fill sectional_sensor and section_change 
 
-        computeDisplacementWithDistance();
-        findSectionEngaged();
-        computeSectionForce(focusSectionIndex);
-        graphYT.addRealTimeDataToGraph(focusSectionForce) ;
 
+        // sectional displacement change
+        Debug.Log("sectional displacement: " + sectional_displacements);
+        //sagittalBonesMovement(30, 0.5f); // option 1: move with mapping value to each bone section
+
+        this.focusSectionForce = computeSectionForce(focusSectionIndex); // compute force for graph visualisation 
+        // sagittalBoneMovementV2(focusSectionIndex, focusSectionForce, 17f); // still option 2, but with curation
+        // tranverseBonesMovementVisualiser(focusSectionIndex);
+        
+
+        // ===== Low-pass filter here ====== // 
+        if (focusSectionForce != currentData)
+        {
+            targetData = focusSectionForce;
+        }
+
+        if (lowPassFilter < 1)
+        {
+            focusSectionForce = Mathf.Lerp(currentData, targetData, lowPassFilter);
+        }
+
+        currentData = focusSectionForce;
+        // ================================ //
+
+        graphYT.addRealTimeDataToGraph(focusSectionForce);
         string data = focusSectionForce.ToString();//testing 
-        //string sensorsDisplacementsString = string.Join(", ", sensors_displacements);
         
         output.text = "Focused Section: " + focusSectionIndex;
         log.text = "Force: " + focusSectionForce;
+        //change.text = "Change: " + sectional_change[focusSectionIndex];
 
         sensors_loads1 = converted_data;
 
@@ -92,8 +135,12 @@ public class BluetoothDataReceiver : MonoBehaviour
 
     private void Update()
     {
-        
-        
+        if (bluetoothManager != null && connected)
+        {
+            sensorDatainString = bluetoothManager.inputdata;
+            converted_data = ConvertedFloat(sensorDatainString);
+        }
+
     }
 
     private float[] ConvertedFloat(string inputData)
@@ -121,46 +168,7 @@ public class BluetoothDataReceiver : MonoBehaviour
             }
         }
 
-        //////////////Computing individual vertebral displacement and orientation in both planes
-
-        //for (int i = 0; i < numBones; i++)
-        //{
-
-        //    float vertebralDisp;
-        //    float sagTilt;
-        //    float heightsDiff;  //difference between left side and right side
-        //    float transTilt;
-
-        //    float leftDisp, rightDisp;
-
-        //    if (i == 0)
-        //    { //the first bone
-        //        sagTilt = (float)((sectional_displacements[i] - sectional_displacements[i + 1]) * 0.05); ///0.05 random factor, tune it manually
-        //    }
-        //    else if (i == numBones - 1)
-        //    { //the last bone
-        //        sagTilt = (float)((sectional_displacements[i - 1] - sectional_displacements[i]) * 0.05);
-        //    }
-        //    else
-        //    {
-        //        sagTilt = (float)((sectional_displacements[i - 1] - sectional_displacements[i + 1]) * 0.05);
-        //    }
-
-        //    vertebralDisp = sectional_displacements[i];
-
-        //    leftDisp = sensors_displacements[i * 2];
-        //    rightDisp = sensors_displacements[(i * 2) + 1];
-        //    vertebrae.get(i).setDisplacement(vertebralDisp);
-
-        //    vertebrae.get(i).setSagittalTilt(sagTilt);
-
-        //    heightsDiff = leftDisp - rightDisp;
-        //    transTilt = (float)Math.Atan(heightsDiff / distLRSensors);
-        //    vertebrae.get(i).setTransverseTilt(transTilt);
-
-        //    vertebrae.get(i).setLeftDisplacement(leftDisp);
-        //    vertebrae.get(i).setRightDisplacement(rightDisp);
-        //}
+       
     }
     private void computeVertebraeLoads()
     {
@@ -172,21 +180,6 @@ public class BluetoothDataReceiver : MonoBehaviour
             this.sectional_loads[i] = (this.sensors_loads2[indexLeft] + this.sensors_loads2[indexRight]) / 2; //this algorithm may need revision
             //////////////////////////////////////////////////////////////////////////////
         }
-
-        //for (int i = 0; i < numBones; i++)
-        //{
-
-        //    float vertebralLoad;
-        //    float leftLoad, rightLoad;
-
-        //    vertebralLoad = sectional_loads[i];
-        //    leftLoad = sensors_loads[i * 2];
-        //    rightLoad = sensors_loads[(i * 2) + 1];
-
-        //    vertebrae.get(i).setLoad(vertebralLoad);
-        //    vertebrae.get(i).setLeftLoad(leftLoad);
-        //    vertebrae.get(i).setRightLoad(rightLoad);
-        //}
     }
 
     private void computeDisplacementWithDistance()
@@ -196,6 +189,7 @@ public class BluetoothDataReceiver : MonoBehaviour
             this.sensors_displacements[i] = this.converted_data[i] - this.sensors_loads1[i];
         }
     }
+
     private void findSectionEngaged()
     {
         
@@ -205,7 +199,9 @@ public class BluetoothDataReceiver : MonoBehaviour
             int indexLeft = i * 2 + 0;
             int indexRight = i * 2 + 1;
             //////////////////////////////////////////////////////////////////////////////
+            float previousValue = this.sectional_displacements[i];
             this.sectional_displacements[i] = (this.sensors_displacements[indexLeft] + this.sensors_displacements[indexRight]) / 2; //this algorithm may need revision
+            this.sectional_change[i] = this.sectional_displacements[i] - previousValue;
             //////////////////////////////////////////////////////////////////////////////
             if (Math.Abs(this.sectional_displacements[i]) > Math.Abs(this.sectional_displacements[this.focusSectionIndex]))
             {
@@ -240,18 +236,25 @@ public class BluetoothDataReceiver : MonoBehaviour
         
     }
 
-    private void computeSectionForce(int focusSectionIndex)
+    private float computeSectionForce(int focusSectionIndex)
     {
-        float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-        if (force < 15.0f){
-            force = 0.1f;
-        }else{
-             this.focusSectionForce = force;
+        float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2 - 5.0f;
+        if (force <= 0.0f)
+        {
+            return 0.0f;
+        }
+        else if (force >= 30)
+        {
+            return 30.0f;
+        }
+        else
+        {
+            return force;
         }
 
-        
-        
-        //this.focusSectionForce = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2;
-            
     }
+
+
+
+
 }

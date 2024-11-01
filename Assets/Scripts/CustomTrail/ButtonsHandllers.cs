@@ -1,14 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
+using XCharts.Runtime;
 
 public class ButtonsHandllers : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public float countdown = 3f;
+    [SerializeField] RecordingPanelScript recordingPanel;
+    [SerializeField] ShowCustomGraphYT graph;
+
+    public static void LoadMainMenu()
+    {
+        SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
+    }
+
+
     public void OnSaveButtonClicked()
     {
-        DataPersistenceManager.instance.SaveGraph();
+        DataPersistenceManager.instance.NewGraph();
+        graph.cleanGraph();
+        recordingPanel.startRecord();
+ 
 
     }
 
@@ -22,8 +38,45 @@ public class ButtonsHandllers : MonoBehaviour
         DataPersistenceManager.instance.NewGraph();
     }
 
-    public void LoadMainMenu()
+    public bool activated()
     {
-        SceneManager.LoadScene("Assets/Scenes/MainMenu.unity");
+        return RecordingPanelScript.onRecord;
     }
+
+
+    /// <summary>
+    /// Save graph to data
+    /// </summary>
+    public void saveGraph()
+    {
+        DataPersistenceManager.instance.SaveGraph();
+        recordingPanel.stopRecord();
+    }
+
+
+
+
+
+
+
+    //IEnumerator DoTimer(float counttime = 1f)
+    //{
+    //    int count = 0;
+    //    while (timerOn)
+    //    {
+    //        yield return new WaitForSeconds(counttime);
+    //        count ++;
+    //        TimeSpan time = TimeSpan.FromSeconds(count);
+    //        string formattedTime = time.ToString(@"mm\:ss");
+    //        timerTxt.text = formattedTime;
+    //    }
+    //}
+
+    //void newTimer()
+    //{
+    //    StartCoroutine(DoTimer());
+    //}
+
+
+
 }

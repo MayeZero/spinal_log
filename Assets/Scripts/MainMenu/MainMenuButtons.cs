@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuButtons : MonoBehaviour
 {
+
     public void LoadShortTrail()
     {
         SceneManager.LoadScene("Assets/Scenes/PracticeMode.unity");
@@ -30,4 +32,19 @@ public class MainMenuButtons : MonoBehaviour
     {
         SceneManager.LoadScene("Assets/Scenes/3DModel.unity");
     }
+
+    public void LoadFileMenu()
+    {
+        SceneManager.LoadScene("Assets/Scenes/Manage.unity");
+    }
+
+    public void LoadStiffMode()
+    {
+        SceneManager.LoadScene("Assets/Scenes/StiffMode.unity");
+    }
+
+
+    
+
+
 }

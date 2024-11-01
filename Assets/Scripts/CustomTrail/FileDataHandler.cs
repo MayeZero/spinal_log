@@ -18,9 +18,15 @@ public class FileDataHandler
 
     }
 
-    public TrailData Load()
+
+    public TrailData Load(string filename = null)
     {
-        string fullPath = Path.Combine(dataDirPath, dataFileName);
+        if (filename == null)
+        {
+            filename = dataFileName;
+        }
+
+        string fullPath = Path.Combine(dataDirPath, filename);
         TrailData loadedTrailData = new TrailData();
         if (File.Exists(fullPath))
         {
@@ -51,9 +57,13 @@ public class FileDataHandler
         return loadedTrailData;
     }
 
-    public void Save(TrailData data)
+    public void Save(TrailData data, string filename = null)
     {
-        string fullPath = Path.Combine(dataDirPath, dataFileName);
+        if (filename == null)
+        {
+            filename = dataFileName;
+        }
+        string fullPath = Path.Combine(dataDirPath, filename);
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
@@ -74,6 +84,21 @@ public class FileDataHandler
             Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
             
         }
+    }
+
+    public void setDirectory(string directory)
+    {
+        dataDirPath = directory;
+    }
+
+    public void setPath(string filename)
+    {
+        dataFileName = filename;
+    }
+
+    public string getPath()
+    {
+        return dataDirPath + "/" + dataFileName;
     }
 
 }

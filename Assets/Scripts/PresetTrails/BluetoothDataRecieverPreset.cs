@@ -7,18 +7,19 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
-public class BluetoothDataRecieverPreset : MonoBehaviour
+public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
 {
     [SerializeField] ShowingGraphPreset graph;
 
-    private BluetoothManager bluetoothManager;
+    //private BluetoothManager bluetoothManager;
     
     [SerializeField] Text output;
     [SerializeField] Text log;
 
+    //public bool Available = false;
     public string sensorDatainString;
 
-    public float[] converted_data = new float[8];
+    //public float[] converted_data = new float[8];
     public float[] sensors_loads1 = new float[8];
     public float[] sensors_loads2 = new float[8];
     public float[] sensors_displacements = new float[8];
@@ -28,15 +29,15 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
     public float[] sectional_loads = new float[4];
     private int focusSectionIndex;
     public string input;
-
     private IEnumerator myCoroutine2;
-
+    public float focusSectionForce;
     private float initialAvgForce;
 
     void Start()
     {
         // Initialize variables and start data processing coroutine
         bluetoothManager = FindObjectOfType<BluetoothManager>();
+        connected = true;
 
         numSections = 4;
         numSensors = 8;
@@ -53,8 +54,8 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
             sectional_displacements[i] = 0.0f;
         }
 
-        focusSectionIndex = 0;
-        
+        focusSectionForce = currentData = targetData = 0.0f;
+
         // sensorDatainString = bluetoothManager.inputdata;
         // converted_data = ConvertedFloat(sensorDatainString);
         // initialAvgForce = 
@@ -63,7 +64,7 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
         {
             StopCoroutine(myCoroutine2);
         }
-        myCoroutine2 = DataProcessing(0.02f);
+        myCoroutine2 = DataProcessing(delayTime);
         Debug.Log("my coroutine set");
         StartCoroutine(myCoroutine2);
         Debug.Log("Coroutine2 started");
@@ -81,10 +82,24 @@ public class BluetoothDataRecieverPreset : MonoBehaviour
 
         computeDisplacementWithDistance();
         findSectionEngaged();
-        float focusSectionForce = computeSectionForce(focusSectionIndex);
+        focusSectionForce = computeSectionForce(focusSectionIndex);
 
-        graph.addRealTimeDataToGraph(focusSectionForce);
-        
+        // ===== Low-pass filter here ====== // 
+        if (focusSectionForce != currentData)
+        {
+            targetData = focusSectionForce;
+        }
+
+        if (lowPassFilter < 1)
+        {
+            focusSectionForce = Mathf.Lerp(currentData, targetData, lowPassFilter);
+        }
+
+        currentData = focusSectionForce;
+        // ================================ //
+
+        graph.addRealTimeDataToGraph(focusSectionForce * graphScale);
+        Debug.Log("Force preset: " + focusSectionForce);
         output.text = "Focused Section: " + focusSectionIndex;
         log.text = "Force: " + focusSectionForce;
 
