@@ -21,6 +21,7 @@ public class BoneControllerScript : MonoBehaviour
 
     void Start()
     {
+        this.gameObject.transform.localRotation = Quaternion.Euler(-90, 0, -90);
         this.boneID = int.Parse(gameObject.name.Substring(1));
 
     }
@@ -50,10 +51,12 @@ public class BoneControllerScript : MonoBehaviour
         this.averageDepth = (leftDepth + rightDepth) / 2;
     }
 
+    [ContextMenu("Test Updown Move")]
     void UpDownMove()
     {
         float moveDist = 0;
         //int maxDistance = 35;
+        
 
         if (initialLeftDepth - leftDepth <= 0.02)
         {
@@ -67,6 +70,7 @@ public class BoneControllerScript : MonoBehaviour
 
             transform.localPosition = new Vector3(originalPosition.x, originalPosition.y, -moveDist * 0.005f);
         }
+        Debug.Log("MoveDist: " + moveDist);
     }
 
 
@@ -116,7 +120,7 @@ public class BoneControllerScript : MonoBehaviour
         float difference = Math.Abs(averageDepth - focusBoneDepth);
         //rotateAngle = averageDepth - focusBoneDepth;
         rotateAngle = Mathf.Tan(difference / boneGap);     // larger boneGap, smaller angle. 
-        if (boneID != focusBoneID)
+        if (boneID <= focusBoneID)
         {
             //UnityDebug.Log("boneID: " + boneID + "focusbone: " + focusBoneID + " rotateAngle: " + -rotateAngle);
             rotateAngle = Math.Max(-THRESHOLD, -rotateAngle);
