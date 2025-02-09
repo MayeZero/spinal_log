@@ -64,6 +64,7 @@ public class RecordingPanelScript : MonoBehaviour
         onRecord = false;
         recTxt.enabled = false;
         blinkingButton.color = Color.red;
+        timerTxt.text = string.Empty;
         if (coroutine != null)
         {
             StopCoroutine(coroutine);

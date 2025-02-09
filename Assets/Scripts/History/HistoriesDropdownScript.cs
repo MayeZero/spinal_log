@@ -43,15 +43,19 @@ public class HistoriesDropdownScript : MonoBehaviour
         {
             fileDropDown.options.Add(new TMP_Dropdown.OptionData("History"));
 
-            // add additional available files
-            int fileCount = DataPersistenceManager.instance.getFileCount();
-            Debug.Log("Total recorded files: " + fileCount);
-            for (int i = 1; i < fileCount + 1; i++)
+            //// add additional available files
+            //int fileCount = DataPersistenceManager.instance.getFileCount();
+            //Debug.Log("Total recorded files: " + fileCount);
+            //for (int i = 1; i < fileCount + 1; i++)
+            //{
+            //    addNewOption(i);
+            //}
+
+            foreach (string fileName in DataPersistenceManager.instance.getAllFiles())
             {
-                addNewOption(i);
+                fileDropDown.options.Add(new TMP_Dropdown.OptionData(Path.GetFileName(fileName)));
             }
 
-            countIndex = fileCount;
         } else
         {
             fileDropDown.AddOptions(graphNames);
@@ -119,7 +123,7 @@ public class HistoriesDropdownScript : MonoBehaviour
         {
             DataPersistenceManager.instance.fileCount -= 1;
             FileHandler.deleteFile(foldername, fileDropDown.options[value].text);
-            FileHandler.renameAllFiles(Application.persistentDataPath);
+            //FileHandler.renameAllFiles(Application.persistentDataPath);
         }
 
         setFileDropDown();

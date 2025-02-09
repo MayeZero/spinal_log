@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using System.IO;
+using System.IO.Enumeration;
 
 
 public class DataPersistenceManager : MonoBehaviour
@@ -20,6 +21,8 @@ public class DataPersistenceManager : MonoBehaviour
 
     public static DataPersistenceManager instance { get; private set; }
 
+    private HashSet<string> fileNames = new HashSet<string>();
+
     private void Awake()
     {
         if (instance != null)
@@ -35,6 +38,7 @@ public class DataPersistenceManager : MonoBehaviour
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         this.dataPersistenceObjects = FindAllDataPersistenceObjects();
         fileCount = getAllFiles().Length;
+        LoadSystemFilesToHashSet();
         LoadGraph();
         //deleteAllFiles();
         
@@ -102,11 +106,11 @@ public class DataPersistenceManager : MonoBehaviour
         return this.dataHandler.getPath();
     }
 
-    public string makeNewFile(int index)
-    {
-        string filename = "data" + getFileCount() + ".csv";
-        return filename;
-    }
+    //public string makeNewFile(int index)
+    //{
+    //    string filename = "data" + getFileCount() + ".csv";
+    //    return filename;
+    //}
 
     public int getFileCount()
     {
@@ -167,6 +171,62 @@ public class DataPersistenceManager : MonoBehaviour
                 Debug.LogError("Error deleting file: " + file + "\n" + e.Message);
             }
         }
+    }
+
+    private void LoadSystemFilesToHashSet()
+    {
+        // Get the persistent data path
+        string path = Application.persistentDataPath;
+
+        // Check if the directory exists
+        if (Directory.Exists(path))
+        {
+            // Get all files in the directory
+            string[] files = Directory.GetFiles(path, "*.csv")
+                .Select(fileName => Path.GetFileNameWithoutExtension(fileName))
+                .ToArray();
+            // Add all files to hash set
+            AddNewFilesToHashSet(files);
+            Debug.Log("Files loaded: " + fileNames.ToString());
+        }
+        else
+        {
+            Debug.Log("Directory does not exist.");
+        }
+    }
+
+    // Hash set functions //
+
+
+    public void AddNewFilesToHashSet(string[] files)
+    {
+        foreach (string file in files)
+        {
+            fileNames.Add(file);
+        }
+    }
+
+
+    public bool CheckFileExistInHashSet(string name)
+    {
+        return fileNames.Contains(name);
+    }
+
+
+    public void DeleteFileInHashSet(string name)
+    {
+        if (CheckFileExistInHashSet(name))
+        {
+            fileNames.Remove(name);
+        } else
+        {
+            Debug.Log("Hash set does not contain " + name);
+        }
+    }
+
+    public void AddFileToHashSet(string name)
+    {
+        fileNames.Add(name);
     }
 
 
