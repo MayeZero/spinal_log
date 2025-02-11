@@ -33,16 +33,6 @@ public class BluetoothDataReceiver : BluetoothReceiverSuperClass
     public float focusSectionForce;
     public int denominator = 1;
     private MonoBoneScript[] bones = new MonoBoneScript[4];
-    //[SerializeField] float delayTime = 0.08f;
-
-    // This field controls the low pass value
-    // Use 1 for no filtering, and a value closer to zero for more sluggish filtering 
-    // (Note that zero would be invalid and freeze the transform)
-    //
-    //[Range(0.1f, 1.0f)]
-    ////public float lowPassFilter = 0.5f;
-    //public float LowPassFilter { set { lowPassFilter = value; } }
-    //public float currentData, targetData;
 
     private IEnumerator myCoroutine;
 
@@ -101,8 +91,6 @@ public class BluetoothDataReceiver : BluetoothReceiverSuperClass
         //sagittalBonesMovement(30, 0.5f); // option 1: move with mapping value to each bone section
 
         this.focusSectionForce = computeSectionForce(focusSectionIndex); // compute force for graph visualisation 
-        // sagittalBoneMovementV2(focusSectionIndex, focusSectionForce, 17f); // still option 2, but with curation
-        // tranverseBonesMovementVisualiser(focusSectionIndex);
         
 
         // ===== Low-pass filter here ====== // 
@@ -222,16 +210,6 @@ public class BluetoothDataReceiver : BluetoothReceiverSuperClass
             
             return sensorForce;
         }
-
-        ///Haining
-        // if(bluetoothManager.IsStiff){
-        //     float sensorForce = (1 - this.converted_data[sensorIndex] / 35) * 170.3f;
-        //     return sensorForce;
-        // } else{
-        //     float sensorForce = (1 - this.converted_data[sensorIndex] / 43) * 136.48f;
-        //     return sensorForce;
-        // }
-
 
         
     }

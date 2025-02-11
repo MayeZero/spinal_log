@@ -13,7 +13,6 @@ public class DropDownScript : MonoBehaviour
     [SerializeField] private TMP_Dropdown dropdown;
     [SerializeField] private TMP_Text SelectText;
     HashSet<string> fileNames = new HashSet<string>();
-    string DEFAULT_NAME = "NewFile";
     int countFile = 0;
     //bool selected = false;
 
@@ -26,6 +25,7 @@ public class DropDownScript : MonoBehaviour
         int fileCount = DataPersistenceManager.instance.getFileCount();
         Debug.Log("Total recorded files: " + fileCount);
 
+        // Set up the dropdown list (with available files)
         foreach (string fileName in DataPersistenceManager.instance.getAllFiles())
         {
             addNewOptionToDropDown(Path.GetFileNameWithoutExtension(fileName));
@@ -38,17 +38,27 @@ public class DropDownScript : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Activate when a dropdown item is selected
+    /// </summary>
     public void DropdownSample()
     {
         SelectText.gameObject.SetActive(false);
-        int index = dropdown.value;
-        string filename = dropdown.options[index].text;
+
+        // get the current selected filename from dropdown
+        int index = dropdown.value;    
+        string filename = dropdown.options[index].text;  
+
+        // update the system file using selected filename
         updateSystemFile(filename);
         DataSourceText.text = DataPersistenceManager.instance.getFileName();
     }
 
 
-
+    /// <summary>
+    /// Update the name of currently used system file
+    /// </summary>
+    /// <param name="name"></param>
     private void updateSystemFile(string name)
     {
         if (name.Length > 0)

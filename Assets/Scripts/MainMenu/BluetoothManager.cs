@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 using JetBrains.Annotations;
 using System.Linq;
+using TMPro;
 
 public class BluetoothManager : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class BluetoothManager : MonoBehaviour
     public GameObject devicesListContainer;
     public GameObject deviceMACText;
     private bool isConnected;
-
+    private string devicename = "spinal log";
     private System.Random random;
     
 
@@ -173,15 +174,21 @@ public class BluetoothManager : MonoBehaviour
         if (Application.platform != RuntimePlatform.Android)
             return;
 
-        if (isConnected)
-            BluetoothConnector.CallStatic("StopConnection");
+        BluetoothConnector.CallStatic("StopConnection");
+        
     }
 
     // This function will be called by Java class to update BT connection status,
     // DO NOT CHANGE ITS NAME OR IT WILL NOT BE FOUND BY THE JAVA CLASS
     public void ConnectionStatus(string status)
     {
-        Toast("Connection Status: " + status);
+        string additionalDetail = string.Empty;
+        if (status == "connected")
+        {
+            additionalDetail = " to " + devicename;
+        }
+
+        Toast("Connection Status: " + status + additionalDetail);
         isConnected = status == "connected";
     }
 
@@ -233,6 +240,7 @@ public class BluetoothManager : MonoBehaviour
         // Get the list of paired devices
         string[] data = BluetoothConnector.CallStatic<string[]>("GetPairedDevices");
 
+        // Connect to devices based on stiff mode on or not
         foreach (var d in data)
         {
             if (!stiffOn)
@@ -241,6 +249,7 @@ public class BluetoothManager : MonoBehaviour
                 {
                     string[] parts = d.Split('+');
                     string macAddress = parts[0];
+                    devicename = "SpinalLog";
                     BluetoothConnector.CallStatic("StartConnection", macAddress);
                     break; // Break out of the loop since we found the device to connect to
                 }
@@ -250,6 +259,7 @@ public class BluetoothManager : MonoBehaviour
                 {
                     string[] parts = d.Split('+');
                     string macAddress = parts[0];
+                    devicename = "AirCase";
                     BluetoothConnector.CallStatic("StartConnection", macAddress);
                     break; // Break out of the loop since we found the device to connect to
                 }
@@ -257,6 +267,10 @@ public class BluetoothManager : MonoBehaviour
         }
     }
 
+    public bool IsConnected()
+    {
+        return isConnected;
+    }
 
     
     ///Testing, Generating random inputdata.///

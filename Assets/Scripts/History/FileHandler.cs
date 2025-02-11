@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class FileHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
+    /// <summary>
+    /// Delete system file with given folder and filename
+    /// </summary>
+    /// <param name="folder"></param>
+    /// <param name="file"></param>
     public static void deleteFile(string folder, string file)
     {
         string path = Path.Combine(folder, file);
@@ -22,31 +22,31 @@ public class FileHandler : MonoBehaviour
         }
     }
 
-    public static void renameAllFiles(string folderPath)
-    {
-        string baseFileName = "data";
-        if (Directory.Exists(folderPath))
-        {
-            // Get all .csv files in the folder
-            string[] files = Directory.GetFiles(folderPath, "*.csv");
+    //public static void renameAllFiles(string folderPath)
+    //{
+    //    string baseFileName = "data";
+    //    if (Directory.Exists(folderPath))
+    //    {
+    //        // Get all .csv files in the folder
+    //        string[] files = Directory.GetFiles(folderPath, "*.csv");
 
-            for (int i = 0; i < files.Length; i++)
-            {
-                string oldFilePath = files[i];
-                string extension = Path.GetExtension(oldFilePath);
-                string newFileName = baseFileName + (i + 1) + extension; // Renaming to data1, data2, etc.
-                string newFilePath = Path.Combine(folderPath, newFileName);
+    //        for (int i = 0; i < files.Length; i++)
+    //        {
+    //            string oldFilePath = files[i];
+    //            string extension = Path.GetExtension(oldFilePath);
+    //            string newFileName = baseFileName + (i + 1) + extension; // Renaming to data1, data2, etc.
+    //            string newFilePath = Path.Combine(folderPath, newFileName);
 
-                // Rename the file
-                File.Move(oldFilePath, newFilePath);
-                Debug.Log("Renamed file: " + oldFilePath + " to " + newFilePath);
-            }
-        }
-        else
-        {
-            Debug.LogError("Folder does not exist: " + folderPath);
-        }
-    }
+    //            // Rename the file
+    //            File.Move(oldFilePath, newFilePath);
+    //            Debug.Log("Renamed file: " + oldFilePath + " to " + newFilePath);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("Folder does not exist: " + folderPath);
+    //    }
+    //}
 
 
     public static List<float> readCSVFile(string datadir, string filename)
