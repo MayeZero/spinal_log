@@ -6,6 +6,28 @@ using UnityEngine.UI;
 
 public class MainMenuButtons : MonoBehaviour
 {
+    [SerializeField] GameObject connectButton;
+    [SerializeField] GameObject disconnectButton;
+
+    private void Start()
+    {
+        UpdateConnectionButtons();
+    }
+
+    public void UpdateConnectionButtons()
+    {
+        BluetoothManager bluetoothManager = FindObjectOfType<BluetoothManager>();
+        if (bluetoothManager != null && bluetoothManager.IsConnected()) 
+        { 
+            connectButton.SetActive(false);
+            disconnectButton.SetActive(true);
+        } else
+        {
+            connectButton.SetActive(true);
+            disconnectButton.SetActive(false);
+        }
+
+    }
 
     public void LoadShortTrail()
     {

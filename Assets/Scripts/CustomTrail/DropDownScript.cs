@@ -5,13 +5,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using XCharts.Runtime;
+using System.IO;
 
 public class DropDownScript : MonoBehaviour
 {
     [SerializeField] private TMP_Text DataSourceText;
     [SerializeField] private TMP_Dropdown dropdown;
     [SerializeField] private TMP_Text SelectText;
-    int countIndex = 0;
+    HashSet<string> fileNames = new HashSet<string>();
+    int countFile = 0;
     //bool selected = false;
 
 
@@ -20,19 +22,15 @@ public class DropDownScript : MonoBehaviour
     private void Start()
     {
         dropdown.options.Clear();
-        dropdown.options.Add(new TMP_Dropdown.OptionData("New"));
-        addNewOption(1);  // default file G1
-        countIndex = 1;
-
-        // add additional available files
         int fileCount = DataPersistenceManager.instance.getFileCount();
         Debug.Log("Total recorded files: " + fileCount);
-        for (int i = 2; i < fileCount + 1; i++)
-        {
-            addNewOption(i);
-        }
 
-        countIndex = fileCount;
+        // Set up the dropdown list (with available files)
+        foreach (string fileName in DataPersistenceManager.instance.getAllFiles())
+        {
+            addNewOptionToDropDown(Path.GetFileNameWithoutExtension(fileName));
+            countFile++;
+        }
     }
 
     private void Awake()
@@ -40,34 +38,60 @@ public class DropDownScript : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Activate when a dropdown item is selected
+    /// </summary>
     public void DropdownSample()
     {
         SelectText.gameObject.SetActive(false);
-        int index = dropdown.value;
 
-        if (index == 0)
-        {
-            countIndex += 1;
-            index = countIndex;
-            addNewOption(index);
-            DataPersistenceManager.instance.fileCount += 1;
-            dropdown.value = index;
-        }
+        // get the current selected filename from dropdown
+        int index = dropdown.value;    
+        string filename = dropdown.options[index].text;  
 
-        string filename = getFileName(index);
-        DataPersistenceManager.instance.setFileName(filename);
+        // update the system file using selected filename
+        updateSystemFile(filename);
         DataSourceText.text = DataPersistenceManager.instance.getFileName();
     }
 
-    private string getFileName(int index)
+
+    /// <summary>
+    /// Update the name of currently used system file
+    /// </summary>
+    /// <param name="name"></param>
+    private void updateSystemFile(string name)
     {
-        return "data" + (index) + ".csv";
+        if (name.Length > 0)
+        {
+            string fileName = name + ".csv"; // retrieve file name with extension
+            DataPersistenceManager.instance.setFileName(fileName);
+        }
+        
     }
 
 
-    private void addNewOption(int option)
+
+
+    /// <summary>
+    /// Add a new option to dropdown UI
+    /// </summary>
+    /// <param name="option"></param>
+    private void addNewOptionToDropDown(string option)
     {
-        dropdown.options.Add(new TMP_Dropdown.OptionData("G" + option));
+        dropdown.options.Add(new TMP_Dropdown.OptionData(option));
         dropdown.RefreshShownValue();
+    }
+
+    /// <summary>
+    /// Add new file and update dropdown UI
+    /// </summary>
+    public void addNewDataFile(string filename)
+    {
+        countFile ++;
+        addNewOptionToDropDown(filename);
+        DataPersistenceManager.instance.fileCount++; // update file count in Data Persistent manager 
+        dropdown.value = countFile;  // go to the newest item in the list
+        updateSystemFile(filename);
+        DataPersistenceManager.instance.AddFileToHashSet(filename);
     }
 }

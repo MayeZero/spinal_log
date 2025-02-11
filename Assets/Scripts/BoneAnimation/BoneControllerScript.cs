@@ -15,8 +15,8 @@ public class BoneControllerScript : MonoBehaviour
     private float initialRightDepth;
     private float THRESHOLD = 0.015f;
     [SerializeField] bool saggitalSide;
-    public static int boneLength = 15;
-    public static int boneGap = 200;
+    public static int boneLength = 75;
+    public static int boneGap = 500;
 
 
     void Start()
