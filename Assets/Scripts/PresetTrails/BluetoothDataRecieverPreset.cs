@@ -12,7 +12,7 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
     [SerializeField] ShowingGraphPreset graph;
 
     //private BluetoothManager bluetoothManager;
-    
+
     [SerializeField] Text output;
     [SerializeField] Text log;
 
@@ -32,6 +32,8 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
     private IEnumerator myCoroutine2;
     public float focusSectionForce;
     private float initialAvgForce;
+    public float sumDisplacement;
+    public float sumForce;
 
     void Start()
     {
@@ -47,6 +49,10 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
             sensors_loads1[i] = 0.0f;
             sensors_displacements[i] = 0.0f;
         }
+        sensorDatainString = bluetoothManager.inputdata;
+        Debug.Log("Sensor data in string for the first time: " + sensorDatainString);
+        converted_data = ConvertedFloat(sensorDatainString);
+        sensors_loads1 = converted_data;
 
         for (int i = 0; i < sectional_loads.Length; i++)
         {
@@ -76,43 +82,61 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
 
         while (true)
         {
-        sensorDatainString = bluetoothManager.inputdata;
-        
-        converted_data = ConvertedFloat(sensorDatainString);
+            sensorDatainString = bluetoothManager.inputdata;
+            Debug.Log("Sensor data in string: " + sensorDatainString);
+            converted_data = ConvertedFloat(sensorDatainString);
 
-        computeDisplacementWithDistance();
-        findSectionEngaged();
-        focusSectionForce = computeSectionForce(focusSectionIndex);
+            computeDisplacementWithDistance();
+            sumDisplacementWithDistance();
+            sumForce = computeSumForce(sumDisplacement);
+            findSectionEngaged();
+            focusSectionForce = computeSectionForce(focusSectionIndex);
 
-        // ===== Low-pass filter here ====== // 
-        if (focusSectionForce != currentData)
-        {
-            targetData = focusSectionForce;
+            // ===== Low-pass filter here ====== // 
+            //if (focusSectionForce != currentData)
+            //{
+            //    targetData = focusSectionForce;
+            //}
+
+            //if (lowPassFilter < 1)
+            //{
+            //    focusSectionForce = Mathf.Lerp(currentData, targetData, lowPassFilter);
+            //}
+
+            //currentData = focusSectionForce;
+            // ================================ //
+
+            // ===== Low - pass filter here ====== // 
+            if (sumForce != currentData)
+            {
+                targetData = sumForce;
+            }
+
+            if (lowPassFilter < 1)
+            {
+                sumForce = Mathf.Lerp(currentData, targetData, lowPassFilter);
+            }
+
+            currentData = sumForce;
+            // ================================ //
+
+            graph.addRealTimeDataToGraph(sumForce * graphScale);
+            //graph.addRealTimeDataToGraph(focusSectionForce * graphScale);
+            Debug.Log("Force preset: " + focusSectionForce);
+            output.text = "Focused Section: " + focusSectionIndex;
+            log.text = "Force: " + sumForce;
+            //log.text = "Force: " + focusSectionForce;
+
+            //sensors_loads1 = converted_data;
+
+            yield return new WaitForSeconds(waitTime);
         }
 
-        if (lowPassFilter < 1)
-        {
-            focusSectionForce = Mathf.Lerp(currentData, targetData, lowPassFilter);
-        }
-
-        currentData = focusSectionForce;
-        // ================================ //
-
-        graph.addRealTimeDataToGraph(focusSectionForce * graphScale);
-        Debug.Log("Force preset: " + focusSectionForce);
-        output.text = "Focused Section: " + focusSectionIndex;
-        log.text = "Force: " + focusSectionForce;
-
-        sensors_loads1 = converted_data;
-
-        yield return new WaitForSeconds(waitTime);
-        }
-        
     }
     //Convert string input to float array
     private float[] ConvertedFloat(string inputData)
     {
-        float[] convertData = new float[8]; 
+        float[] convertData = new float[8];
         convertData = Array.ConvertAll(inputData.Split(','), float.Parse);
         return convertData;
     }
@@ -209,12 +233,28 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
         for (int i = 0; i < sensors_displacements.Length; i++)
         {
             this.sensors_displacements[i] = this.converted_data[i] - this.sensors_loads1[i];
+            Debug.Log("Sensor " + i + " displacement: " + this.sensors_displacements[i]);
         }
+    }
+    //Sum sensor displacement with distance
+    private void sumDisplacementWithDistance()
+    {
+        this.sumDisplacement = 0.0f;
+        for (int i = 0; i <= sensors_displacements.Length; i++)
+        {
+            if (this.sensors_displacements[i] > 0.0f)
+            {
+                this.sensors_displacements[i] = 0.0f; // Discard positive displacements
+            }
+            this.sumDisplacement += this.converted_data[i];
+        }
+        this.sumDisplacement = -this.sumDisplacement; // Negate the sum to match the expected direction
+        Debug.Log("Sum of displacements: " + this.sumDisplacement);
     }
     //Find the most engaged section based on displacement
     private void findSectionEngaged()
     {
-        
+
 
         for (int i = 0; i < this.numSections; i++)
         {
@@ -234,30 +274,64 @@ public class BluetoothDataRecieverPreset : BluetoothReceiverSuperClass
     {
         //Formula needs to be optimised 
         //Different calculations based on stiffness settingd
-        if(bluetoothManager.IsStiff){
-            
+        if (bluetoothManager.IsStiff)
+        {
+
             float sensorForce = (1 - this.converted_data[sensorIndex] / 40) * 146;
             return sensorForce;
-        
-            
-        } else{
+
+
+        }
+        else
+        {
             float sensorForce = (1 - this.converted_data[sensorIndex] / 30) * 219;
-            
+
             return sensorForce;
+        }
+    }
+    //Compute sum force for all sensors
+    private float computeSumForce(float sumDisplacement)
+    {
+        float sumForce = 0.0f;
+        if (bluetoothManager.IsStiff)
+        {
+            sumForce = (1 - sumDisplacement / 40) * 146;
+        }
+        else
+        {
+            sumForce = (sumDisplacement / 40) * 50;
+        }
+
+        if (sumForce <= 0.0f)
+        {
+            return 0.0f;
+        }
+        else if (sumForce >= 30)
+        {
+            return 30.0f;
+        }
+        else
+        {
+            return sumForce;
         }
     }
     //Compute force for a section (average of two sensors)
     private float computeSectionForce(int focusSectionIndex)
     {
         float force = (computeSensorForce(focusSectionIndex * 2 + 0) + computeSensorForce(focusSectionIndex * 2 + 1)) / 2 - 5.0f;
-        if (force <= 0.0f){
+        if (force <= 0.0f)
+        {
             return 0.0f;
-        }else if (force >= 30){
-            return 30.0f;
-        }else{
-            return force; 
         }
-            
+        else if (force >= 30)
+        {
+            return 30.0f;
+        }
+        else
+        {
+            return force;
+        }
+
     }
 }
 
