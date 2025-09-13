@@ -56,7 +56,7 @@ public class BoneControllerScript : MonoBehaviour
     {
         float moveDist = 0;
         //int maxDistance = 35;
-        
+        Debug.Log("boneID: " + boneID + " initialLeftDepth: " + initialLeftDepth + " initialRightDepth: " + initialRightDepth + $" Left: {leftDepth}, Right: {rightDepth}, Avg: {averageDepth}");
 
         if (initialLeftDepth - leftDepth <= 0.02)
         {
@@ -64,11 +64,13 @@ public class BoneControllerScript : MonoBehaviour
         }
         else
         {
-            moveDist = initialLeftDepth - averageDepth;
+            float initialAverageDepth = (initialLeftDepth + initialRightDepth) / 2;
+            moveDist = initialAverageDepth - averageDepth;
 
             Vector3 originalPosition = transform.localPosition;
 
-            transform.localPosition = new Vector3(originalPosition.x, originalPosition.y, -moveDist * 0.005f);
+            //transform.localPosition = new Vector3(originalPosition.x, originalPosition.y, -moveDist * 0.005f);
+            transform.localPosition = new Vector3(originalPosition.x, originalPosition.y, moveDist * 0.16f);
         }
         Debug.Log("MoveDist: " + moveDist);
     }
@@ -167,7 +169,8 @@ public class BoneControllerScript : MonoBehaviour
         newRotation.x = xDegree; // Assuming rotation in the sagittal plane is around the x-axis
         newRotation.y = yDegree;
 
-        transform.localRotation = Quaternion.Euler(xDegree * 400f, yDegree * 500f, 0f);
+        //transform.localRotation = Quaternion.Euler(xDegree * 400f, yDegree * 500f, 0f);
+        transform.localRotation = Quaternion.Euler(xDegree * 400f, yDegree * 300f, 0f);
     }
 
     public float TestxDegree;
