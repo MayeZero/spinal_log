@@ -41,19 +41,57 @@ public class BoneGroupController : MonoBehaviour
             }
             focusBone = FindFocusBoneDepth();
 
-            float highestAngle = 0;
+            //float highestAngle = 0;
 
-            // count rotation degree
-            foreach (GameObject bone in boneGroup)
+            //// count rotation degree
+            //foreach (GameObject bone in boneGroup)
+            //{
+            //    float degree = bone.GetComponent<BoneControllerScript>().SaggitoRotationDegree(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID);
+            //    highestAngle = Mathf.Max(highestAngle, Mathf.Abs(degree));
+
+            //}
+
+            //foreach (GameObject bone in boneGroup)
+            //{
+            //    bone.GetComponent<BoneControllerScript>().Rotation(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID, highestAngle);
+            //}
+
+            if (gameObject.name == "TranverseController")
             {
-                float degree = bone.GetComponent<BoneControllerScript>().SaggitoRotationDegree(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID);
-                highestAngle = Mathf.Max(highestAngle, Mathf.Abs(degree));
+                if (boneGroup == null || boneGroup.Length == 0)
+                {
+                    return;
+                }
 
+                float minDepth = float.MaxValue;
+
+                foreach (GameObject bone in boneGroup)
+                {
+                    var boneScript = bone.GetComponent<BoneControllerScript>();
+                    if(boneScript != null && boneScript.averageDepth < minDepth)
+                    {
+                        minDepth = boneScript.averageDepth;
+                    }
+                }
+
+                foreach (GameObject bone in boneGroup)
+                {
+                    bone.SetActive(bone == focusBone);
+                }
+
+                var focusScript = focusBone.GetComponent<BoneControllerScript>();
+                if(focusScript != null)
+                {
+                    focusScript.Rotation(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID);
+                }
+                Debug.Log("TranverseController");
             }
-
-            foreach (GameObject bone in boneGroup)
+            else
             {
-                bone.GetComponent<BoneControllerScript>().Rotation(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID, highestAngle);
+                foreach(GameObject bone in boneGroup)
+                {
+                    bone.GetComponent<BoneControllerScript>().Rotation(focusBone.GetComponent<BoneControllerScript>().averageDepth, focusBone.GetComponent<BoneControllerScript>().boneID);
+                }
             }
 
         }

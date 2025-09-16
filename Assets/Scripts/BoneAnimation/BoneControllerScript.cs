@@ -149,21 +149,23 @@ public class BoneControllerScript : MonoBehaviour
         }
     }
 
-    public void Rotation(float focusBoneDepth, int focusBoneID, float highestAngle)
+    //public void Rotation(float focusBoneDepth, int focusBoneID, float highestAngle)
+    public void Rotation(float focusBoneDepth, int focusBoneID)
     {
 
-        float xDegree = 0f;
-        float yDegree = 0f;
+        //float xDegree = 0f;
+        //float yDegree = 0f;
 
-        if (saggitalSide)
-        {
-            xDegree = SaggitoRotationDegree(focusBoneDepth, focusBoneID) + highestAngle; 
-        } else
-        {
-            enabledTranverse(focusBoneID);
-            yDegree = TransverseRotationDegree();
-        }
-
+        //if (saggitalSide)
+        //{
+        //    xDegree = SaggitoRotationDegree(focusBoneDepth, focusBoneID) + highestAngle; 
+        //} else
+        //{
+        //    enabledTranverse(focusBoneID);
+        //    yDegree = TransverseRotationDegree();
+        //}
+        float xDegree = SaggitoRotationDegree(focusBoneDepth, focusBoneID);
+        float yDegree = TransverseRotationDegree();
 
         Vector3 newRotation = transform.localEulerAngles;
         newRotation.x = xDegree; // Assuming rotation in the sagittal plane is around the x-axis
